@@ -25,7 +25,8 @@ interface StatNumberProps {
  */
 export function StatNumber({ value, unit, size = 'md', className }: StatNumberProps) {
   return (
-    <span className={cx('tnum font-medium text-fg', SIZE[size], className)}>
+    // nowrap：数值与单位是一个整体，「10M」和「tokens」断成两行会让读数失去意义
+    <span className={cx('tnum whitespace-nowrap font-medium text-fg', SIZE[size], className)}>
       {value}
       {unit != null && <span className="ml-1 text-xs font-normal text-fg-dim">{unit}</span>}
     </span>

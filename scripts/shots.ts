@@ -10,6 +10,9 @@
  * 用法：
  *   npm run shots                 # 首页 + 样式规范
  *   npm run shots -- / /leaderboard
+ *
+ * 设 `SHOT_VIEWPORT=1` 只截首屏（不截整页）。整页截图在长页面上会高到无法阅读，
+ * 核对首屏排版时用它。
  */
 
 import { createServer } from 'node:http';
@@ -94,7 +97,10 @@ async function main() {
       }
 
       const name = `${route === '/' ? 'home' : route.replace(/^\/|\/$/g, '').replace(/\//g, '-')}-${vp.width}`;
-      await page.screenshot({ path: join(OUT, `${name}.png`), fullPage: true });
+      await page.screenshot({
+        path: join(OUT, `${name}.png`),
+        fullPage: process.env.SHOT_VIEWPORT == null,
+      });
       console.log(`${name}.png  http=${response?.status() ?? '?'}  ${box.client}px 视口`);
       await page.close();
     }

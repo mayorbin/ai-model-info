@@ -30,11 +30,11 @@
 
 ### 批次 3 · 首页广场重做
 
-- [ ] **3.1 重写站点头尾与状态行**：`SiteHeader`（站名 + 静态搜索框 + 导航）、`StatusBar`（等宽读数 + 状态灯）、`SiteFooter`。删除 `Sky` / `Ground` / `HorizonEdge` / `GroundBackdrop` / `PageJump`。证明：首页截图。
-- [ ] **3.2 重写今日格局**：`ChampionStrip` 8 格响应式网格，**口径完全沿用 `champions.ts`，不改判定规则**，每格含 `VendorLogo`。证明：8 格数值与 `npx tsx` 直接调用 `buildChampions()` 的输出一致。
-- [ ] **3.3 重写按类型**：`KindStrip` 6 个 chip 横排，计数来自 `buildKindGroups()`。证明：chip 计数与该函数输出一致。
-- [ ] **3.4 重写广场与模型卡片**：`VendorSection`（厂商分组头 + 组体网格）+ `ModelCard`（模型名 / 状态徽章 / 四条能力条 / 一句定位 / 价格与上下文），布局规格见 `design.md` 4.5。替代 `Plaza` + `ModelRoom`。证明：1440 截图确认一屏 ≥ 12 张卡片。
-- [ ] **3.5 组装 `page.tsx`**：删除精灵图相关调用（`listSpriteSlugs` / `spriteOverlaysBaked` / `overlaysNeeded`），顺序为 Header → StatusBar → 今日格局 → 按类型 → 广场 → Footer。证明：`npm run build` + 1440 / 390 截图。
+- [x] **3.1 重写站点头尾与状态行**：`SiteHeader`（站名 + 静态搜索框 + 导航）、`StatusBar`（等宽读数 + 状态灯）、`SiteFooter`。删除 `Sky` / `Ground` / `HorizonEdge` / `GroundBackdrop` / `PageJump`。证明：首页截图。
+- [x] **3.2 重写今日格局**：`ChampionStrip` 8 格响应式网格，**口径完全沿用 `champions.ts`，不改判定规则**，每格含 `VendorLogo`。证明：8 格数值与 `npx tsx` 直接调用 `buildChampions()` 的输出一致。
+- [x] **3.3 重写按类型**：`KindStrip` 6 个 chip 横排，计数来自 `buildKindGroups()`。证明：chip 计数与该函数输出一致。
+- [x] **3.4 重写广场与模型卡片**：`VendorSection`（厂商分组头 + 组体网格）+ `ModelCard`（模型名 / 状态徽章 / 四条能力条 / 一句定位 / 价格与上下文），布局规格见 `design.md` 4.5。替代 `Plaza` + `ModelRoom`。证明：1440 截图确认一屏 ≥ 12 张卡片。
+- [x] **3.5 组装 `page.tsx`**：删除精灵图相关调用（`listSpriteSlugs` / `spriteOverlaysBaked` / `overlaysNeeded`），顺序为 Header → StatusBar → 今日格局 → 按类型 → 广场 → Footer。证明：`npm run build` + 1440 / 390 截图。
 
 ### 批次 4 · 收尾核验
 

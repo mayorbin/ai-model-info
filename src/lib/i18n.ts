@@ -95,6 +95,12 @@ export interface Dict {
     partialData: string;
   };
 
+  /** 卡片底部那行事实里的开放权重状态 */
+  openness: {
+    open: string;
+    closed: string;
+  };
+
   /** 数据缺失与可信度提示。这些措辞是这个站的诚信底线，改动需谨慎。 */
   unknown: {
     /** 参数量是推算出来的，官方从未公布 */
@@ -133,6 +139,8 @@ export interface Dict {
     };
     /** 本家有更新的型号、但它没资格替下门面时，分组头上那条提示 */
     newer: (name: string) => string;
+    /** 上面那条提示用的短徽章 */
+    newerBadge: string;
     newerHint: (name: string, date: string) => string;
   };
 
@@ -254,6 +262,11 @@ const zh: Dict = {
     partialData: '资料不全',
   },
 
+  openness: {
+    open: '开源',
+    closed: '闭源',
+  },
+
   unknown: {
     sizeEstimated: '规模为估算值，官方从未公布参数量',
     sizeApprox: '参数量由型号名推断，非官方权重实测',
@@ -281,6 +294,7 @@ const zh: Dict = {
       unscored: '还没有任何第三方综合评测成绩',
     },
     newer: (name) => `本家更新：${name}`,
+    newerBadge: '本家更新',
     newerHint: (name, date) =>
       `${name} 发布于 ${date}，比当前展示的这位更新。\n` +
       '这里展示的是这家当下实力第一的型号，而新型号往往还没拿到第三方评测成绩，\n' +

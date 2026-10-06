@@ -2,21 +2,21 @@
 # Progress and legacy approvals. Recover missing evidence; never infer approval from artifact existence.
 
 # === Core state ===
-state: exploring
+state: approved-for-build
 workflow: full
 workflow_variant: planned
 completion_outcome: null
 completion_reason: null
-revision: null
+revision: 2
 
 # === Hashes (fast staleness detection) ===
-artifacts_hash: null
+artifacts_hash: sha256:4755a15beb1f539323707c706ac377b8c47f3640f816f40afdc07712cdc5cd44
 contract_hash: null
 
 # === Execution progress ===
-execution_mode: null
-execution_plan_hash: null
-execution_plan_revision: null
+execution_mode: inline
+execution_plan_hash: sha256:2d44c7ef5af602e6b7c6244196a6eeadf29ed9b55316298d24ef28d890b421f3
+execution_plan_revision: 2
 batches_completed: 0
 test_result: null
 spec_merged: false
@@ -28,9 +28,9 @@ target_branch: null
 
 # === Metadata ===
 change_name: ui-rebuild-terminal
-last_transition: null
-last_transition_from: null
-last_transition_to: null
+last_transition: 2026-10-06T09:58:02.219Z
+last_transition_from: bridging
+last_transition_to: approved-for-build
 
 # === Decision points ===
 dp_0_result: null
@@ -45,12 +45,12 @@ dp_2_result: null
 dp_2_timestamp: null
 dp_2_decisions: null
 dp_2_confirmed: null
-dp_3_result: null
-dp_3_timestamp: null
+dp_3_result: approved: 用户在对话中确认了方案、四个批次划分与 design.md 设计规格，并要求补两条代码规范后直接开始执行
+dp_3_timestamp: 2026-10-06T09:58:01.931Z
 dp_3_decisions: null
 dp_3_confirmed: null
-dp_4_result: null
-dp_4_timestamp: null
+dp_4_result: inline: plan revision 2; user-confirmed-revision; 范围与任务清单均未变化，仅补记首次 workflow start 因仓库尚未 git init 而中断时丢失的 DP-4；授权模式仍是用户确认过的 native inline + final
+dp_4_timestamp: 2026-10-06T09:58:25.078Z
 dp_4_decisions: null
 dp_4_confirmed: null
 dp_5_result: null

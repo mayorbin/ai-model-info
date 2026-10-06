@@ -196,3 +196,10 @@
 - artifacts_hash: sha256:ef64a8b464f9eb7e10782cd89414ac72e6cfb155ff446e8f74b09d414b8cd452
 - plan_hash: sha256:ab0fd0a7183c54d3af47e5a56613b99661b5b970e8d17f56d5146316baa35140
 - plan_revision: 1
+## Execution Plan Resync
+- recorded_at: 2026-10-06T09:58:01.616Z
+- reason: 新增 specs/overview/spec.md（full 工作流的 canonical spec 基座），内容与已交付实现一致
+- previous_artifacts_hash: sha256:ef64a8b464f9eb7e10782cd89414ac72e6cfb155ff446e8f74b09d414b8cd452
+- artifacts_hash: sha256:4755a15beb1f539323707c706ac377b8c47f3640f816f40afdc07712cdc5cd44
+- plan_hash: sha256:93138991cca347213056ed083d639c3809ee782e645b685f094806da7cd9444b
+- plan_revision: 1

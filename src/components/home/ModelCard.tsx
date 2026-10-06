@@ -101,7 +101,7 @@ export function ModelCard({ model, vendor, apt, now }: ModelCardProps) {
 
 /**
  * 卡片右上角的状态徽章。**最多一个**——挂满徽章等于一个都没挂，
- * 这是原项目用实测数据确认过的（74% 的屋子挂同一个图标时，它传递零比特）。
+ * 这是原项目用实测数据确认过的（原项目里 74% 的屋子挂同一个图标，于是它传递零比特）。
  * 优先级：已退役 > 新发布 > 资料不全 > 未参评。
  */
 function statusBadge(model: ModelRecord, now: Date): { tone: BadgeTone; label: string } | null {

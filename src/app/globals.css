@@ -13,6 +13,8 @@
 
 @theme {
   /* ── 背景层级：每级约 +3~5% 亮度 ─────────────────────────── */
+  /* --color-void 的值与 src/app/layout.tsx 的 viewport.themeColor 重复了一份，
+     后者要交给浏览器渲染地址栏、引用不到 CSS 变量。改这里时记得同步。 */
   --color-void: #07080b; /* 页面最底 */
   --color-base: #0c0e13; /* 主内容区 */
   --color-panel: #11141b; /* 卡片 / 面板 */

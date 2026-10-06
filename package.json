@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "check": "tsx scripts/check-consistency.ts",
     "logos": "tsx scripts/vendor-logos.ts",
     "shots": "tsx scripts/shots.ts"
   },

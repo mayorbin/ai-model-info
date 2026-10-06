@@ -20,6 +20,13 @@ export function StatusBar({ snapshot }: { snapshot: WorldSnapshot }) {
         ? 'var(--color-neg)'
         : 'var(--color-warn)';
 
+  /*
+   * 报**在役**模型数而不是快照总量：下方「按类型看」的六个数字合计正是这个数，
+   * 两处对不上会让读者以为哪边算错了。已退役的模型不进任何一处展示，
+   * 把它们的数量混进状态行只会制造矛盾。
+   */
+  const alive = snapshot.models.filter((m) => !m.retiredAt).length;
+
   return (
     <div className="page-shell flex flex-wrap items-center gap-x-2.5 gap-y-1 py-2 text-2xs text-fg-dim">
       <span className="inline-flex items-center gap-1.5">
@@ -33,9 +40,7 @@ export function StatusBar({ snapshot }: { snapshot: WorldSnapshot }) {
       <span aria-hidden className="text-fg-faint">
         ·
       </span>
-      <span className="tnum">
-        {dict.hud.modelCount(snapshot.models.length, snapshot.vendors.length)}
-      </span>
+      <span className="tnum">{dict.hud.modelCount(alive, snapshot.vendors.length)}</span>
       <span aria-hidden className="text-fg-faint">
         ·
       </span>

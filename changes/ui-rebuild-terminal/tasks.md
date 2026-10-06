@@ -38,9 +38,9 @@
 
 ### 批次 4 · 收尾核验
 
-- [ ] **4.1 静态检查与构建**：`npx tsc --noEmit`、`npx eslint src`、`npm run build` 三者全过。证明：命令输出。
-- [ ] **4.2 截图自查脚本**：新增 `scripts/shots.ts`（playwright，起静态服务指向 `out/`），输出 1440 / 390 两档截图到 `docs/shots/`。证明：`npx tsx scripts/shots.ts` 产出两张图，且无横向滚动。
-- [ ] **4.3 数字一致性核对**：首页显示的模型数与厂商数与 `data/models.json` 逐一核对；8 个冠军与 `buildChampions()` 输出逐一核对。证明：核对结果记录。
+- [x] **4.1 静态检查与构建**：`npx tsc --noEmit`、`npx eslint src`、`npm run build` 三者全过。证明：命令输出。
+- [x] **4.2 截图自查脚本**：新增 `scripts/shots.ts`（playwright，起静态服务指向 `out/`），输出 1440 / 390 两档截图到 `docs/shots/`。证明：`npx tsx scripts/shots.ts` 产出两张图，且无横向滚动。
+- [x] **4.3 数字一致性核对**：首页显示的模型数与厂商数与 `data/models.json` 逐一核对；8 个冠军与 `buildChampions()` 输出逐一核对。证明：核对结果记录。
 
 ## 实施备注（仅在必要时）
 

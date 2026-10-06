@@ -43,9 +43,12 @@ const entries = rosters.reduce((n, r) => n + r.entries.length, 0);
  * - SSR 在相邻文本节点之间插入的 `<!-- -->`，否则「617 个模型」会被拆成三段；
  * - `<script>` 里的 RSC flight payload —— 它把同一份 DOM 序列化了第二遍，
  *   不去掉会让分组块数翻倍（实测 40 变成 80）。
+ *
+ * 导出目录：`output: 'export'` 默认写 `out/`；一旦覆盖了 `distDir`（如 `.next-build`），
+ * 产物就落进 `distDir` 本身、不再有 `out/`。两条路径都要认。
  */
-const distDir = resolve(process.cwd(), process.env.NEXT_DIST_DIR ?? '.next');
-const html = readFileSync(resolve(distDir, 'index.html'), 'utf8')
+const exportDir = resolve(process.cwd(), process.env.NEXT_DIST_DIR ?? 'out');
+const html = readFileSync(resolve(exportDir, 'index.html'), 'utf8')
   .replace(/<script[\s\S]*?<\/script>/g, '')
   .replace(/<!--.*?-->/g, '');
 

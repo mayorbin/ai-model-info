@@ -1,7 +1,7 @@
 {
   "mode": "inline",
-  "source": "user-confirmed-revision",
-  "rationale": "范围与任务清单均未变化，仅补记首次 workflow start 因仓库尚未 git init 而中断时丢失的 DP-4；授权模式仍是用户确认过的 native inline + final",
+  "source": "approved-plan",
+  "rationale": "用户在对话中已确认方案、四个批次与 design.md 设计规格；本次为恢复记账闭环重跑，范围与任务清单未变",
   "waves": [
     {
       "id": "implementation",
@@ -34,89 +34,7 @@
   "contract_hash": null,
   "workflow": "full",
   "revision": 2,
+  "schema_version": 2,
   "review_policy": "final",
-  "recommendation": {
-    "available_modes": [
-      "inline",
-      "batch-inline",
-      "sdd"
-    ],
-    "recommendation": {
-      "mode": "inline",
-      "reasons": [
-        "Native inline execution is the default. Choose SDD only when independently scoped delegation justifies its context and review overhead; task and wave counts alone do not justify it."
-      ]
-    },
-    "facts": {
-      "workflow": "full",
-      "documented_task_count": 19,
-      "planned_task_count": 19,
-      "planned_wave_count": 1,
-      "has_parallel_wave": false,
-      "inline_threshold": 3
-    }
-  },
-  "recommendation_receipt": {
-    "recommendation": {
-      "available_modes": [
-        "inline",
-        "batch-inline",
-        "sdd"
-      ],
-      "recommendation": {
-        "mode": "inline",
-        "reasons": [
-          "Native inline execution is the default. Choose SDD only when independently scoped delegation justifies its context and review overhead; task and wave counts alone do not justify it."
-        ]
-      },
-      "facts": {
-        "workflow": "full",
-        "documented_task_count": 19,
-        "planned_task_count": 19,
-        "planned_wave_count": 1,
-        "has_parallel_wave": false,
-        "inline_threshold": 3
-      }
-    },
-    "waves": [
-      {
-        "id": "implementation",
-        "strategy": "serial",
-        "tasks": [
-          "1.1",
-          "1.2",
-          "1.3",
-          "1.4",
-          "1.5",
-          "1.6",
-          "2.1",
-          "2.2",
-          "2.3",
-          "2.4",
-          "2.5",
-          "3.1",
-          "3.2",
-          "3.3",
-          "3.4",
-          "3.5",
-          "4.1",
-          "4.2",
-          "4.3"
-        ],
-        "depends_on": []
-      }
-    ],
-    "artifacts_hash": "sha256:4755a15beb1f539323707c706ac377b8c47f3640f816f40afdc07712cdc5cd44",
-    "contract_hash": null,
-    "workflow": "full",
-    "execution_plan_revision_at_recommendation": 1,
-    "created_at": "2026-10-06T09:58:21.890Z",
-    "hash": "sha256:08930fb3e0f2ed863a394bb98ab9f29dd8ff6e7a5e6ca9c39a686765dd2f7d2f"
-  },
-  "selection": {
-    "confirmed": true,
-    "followed_recommendation": true,
-    "acknowledged_non_recommendation": false
-  },
-  "hash": "sha256:2d44c7ef5af602e6b7c6244196a6eeadf29ed9b55316298d24ef28d890b421f3"
+  "hash": "sha256:61c065fae123ccef8a896c12073a063ecfd89abb6ae80e9578c6b18d9a1228ae"
 }

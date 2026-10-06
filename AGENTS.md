@@ -62,12 +62,36 @@ find src/components -name "*.tsx" -exec wc -l {} + | sort -rn | head -20
 
 ## 三、验证
 
-改动后依次执行，三者都必须通过：
+改动后跑这一条，必须通过：
+
+```bash
+npm run verify
+```
+
+它等于依次执行下面四条，`&&` 串联，任一条失败即中断：
 
 ```bash
 npx tsc --noEmit
-npx eslint src
+npx eslint src scripts
 npm run build
+npm run check
 ```
 
-UI 改动额外用 Playwright 在 **1440 / 390** 两个断点截图自查，确认无横向滚动、字号可读。
+**不要用 `NEXT_DIST_DIR=.next-build npm run build` 这类 POSIX 环境变量前缀写法。**
+它只在 bash 下成立；npm scripts 与不少外部工具在 Windows 上走 `cmd.exe`，
+会直接报「不是内部或外部命令」——本项目已经在这上面栽过一次。需要换产物目录时，
+改 `next.config.ts` 或引入 `cross-env`，别靠 shell 前缀。
+
+`npm run check` 是三条不变式的常驻守卫（在役模型数 == 类型计数之和、
+分组块数 == roster entries、八个冠军逐字命中产物）。它读的是**静态导出目录**：
+`output: 'export'` 默认写 `out/`；一旦覆盖 `distDir`（如 `.next-build`），
+产物就落进 `distDir` 本身、不再有 `out/`。所以它必须排在 `npm run build` 之后。
+
+UI 改动额外在 **1440 / 390** 两个断点截图自查，确认无横向滚动、字号可读：
+
+```bash
+npm run shots          # 整页；加 SHOT_VIEWPORT=1 只截首屏
+```
+
+它用系统 Chrome（`channel: 'chrome'`），不依赖 Playwright 自带 chromium。
+截图落在 `docs/shots/`（已 gitignore）。

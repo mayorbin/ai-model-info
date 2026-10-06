@@ -2,7 +2,7 @@
 # Progress and legacy approvals. Recover missing evidence; never infer approval from artifact existence.
 
 # === Core state ===
-state: approved-for-build
+state: executing
 workflow: full
 workflow_variant: planned
 completion_outcome: null
@@ -18,17 +18,17 @@ execution_mode: inline
 execution_plan_hash: sha256:2d44c7ef5af602e6b7c6244196a6eeadf29ed9b55316298d24ef28d890b421f3
 execution_plan_revision: 2
 batches_completed: 0
-test_result: null
-spec_merged: false
-spec_publication_receipt: null
+test_result: fail: npx tsc --noEmit && npx eslint src scripts && NEXT_DIST_DIR=.next-build npx next build && NEXT_DIST_DIR=.next-build npm run check
+spec_merged: true
+spec_publication_receipt: eyJ2ZXJzaW9uIjoxLCJzb3VyY2VfaGFzaCI6InNoYTI1NjphZjM5MzEzOGY5NDViZjE0MjcwYzdhMWU1ZGUwMTM1NmYxYzk2ODE5N2M2YjFjYjlmZDlhMzc1YTIyZmM0MWQyIiwiYmFzZWxpbmVfYmVmb3JlX2hhc2giOiJzaGEyNTY6Y2RkOTU5M2ZjNjNjZmVkNTdhYzllMDY4Y2Y2MjcwNzZlZjc2YzRjNDI1OTFlNGUzZjA5ZjM0ZWRjOWY0YzVkMSIsImJhc2VsaW5lX2FmdGVyX2hhc2giOiJzaGEyNTY6MDdkZmIzODc0NTdhZDQzOWQ5ODNkODQzMzNiN2I1MmYzZmZjNTM3NTJkNzY0ODgxZjQ4M2Y4NTQ5ODVhYTNiNCIsImNhcGFiaWxpdGllcyI6WyJvdmVydmlldyJdfQ
 
 # === Review anchor (recorded on the first entry into executing) ===
-review_base: null
-target_branch: null
+review_base: f6005f9536cdbea132327b7921015df4ec2d576c
+target_branch: master
 
 # === Metadata ===
 change_name: ui-rebuild-terminal
-last_transition: 2026-10-06T09:58:02.219Z
+last_transition: 2026-10-06T10:25:19.245Z
 last_transition_from: bridging
 last_transition_to: approved-for-build
 

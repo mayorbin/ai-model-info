@@ -1,0 +1,6 @@
+{
+  "previous_plan_hash": "sha256:ab0fd0a7183c54d3af47e5a56613b99661b5b970e8d17f56d5146316baa35140",
+  "previous_revision": 1,
+  "reason": "用户在对话中已确认方案、四个批次与 design.md 设计规格；本次为恢复记账闭环重跑，范围与任务清单未变",
+  "evidence": "scope changed: passing evidence invalidated; failures retained"
+}

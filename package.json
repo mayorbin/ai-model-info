@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "check": "tsx scripts/check-consistency.ts",
+    "verify": "tsc --noEmit && eslint src scripts && next build && tsx scripts/check-consistency.ts",
     "logos": "tsx scripts/vendor-logos.ts",
     "shots": "tsx scripts/shots.ts"
   },

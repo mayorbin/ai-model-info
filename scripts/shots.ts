@@ -20,7 +20,8 @@ import { existsSync, mkdirSync, readFileSync, statSync } from 'node:fs';
 import { extname, join, normalize, resolve } from 'node:path';
 import { chromium } from 'playwright';
 
-const ROOT = resolve(process.cwd(), process.env.NEXT_DIST_DIR ?? '.next');
+/* 导出目录：output:'export' 默认写 out/；覆盖了 distDir 时产物落进 distDir 本身 */
+const ROOT = resolve(process.cwd(), process.env.NEXT_DIST_DIR ?? 'out');
 const OUT = join(process.cwd(), 'docs', 'shots');
 const PORT = 4319;
 
@@ -56,7 +57,7 @@ const VIEWPORTS = [
 
 async function main() {
   if (!existsSync(ROOT)) {
-    console.error(`找不到导出产物 ${ROOT}。先跑 NEXT_DIST_DIR=${process.env.NEXT_DIST_DIR ?? '.next'} npm run build`);
+    console.error(`找不到导出产物 ${ROOT}。先跑 npm run build（覆盖了 distDir 时用 NEXT_DIST_DIR=<dir>）`);
     process.exitCode = 1;
     return;
   }

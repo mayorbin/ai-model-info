@@ -252,3 +252,43 @@
 **其余遗留项**（不阻塞，已在前文详述）：`/styleguide` 需排除出生产产物；
 `src/lib/scores.ts` 目前零引用（按计划为排行榜批次预留）；无页内锚点跳转；
 Claude Opus 5.5「编程 偏弱」的观感问题属既有设计；未做 Safari / Firefox 实测。
+
+---
+
+## 记账闭环已补齐（补跑成功）
+
+用户新建了 GitHub 仓库并要求关联 + 补齐闭环。结果：
+
+**1. 远程已关联**：`origin` → `git@github.com:mayorbin/ai-model-info.git`。
+
+**2. 闭环已补齐**，`workflow complete` 之前的每一步都走通了：
+- 关联远程后重新排查，找到首次中断的确切后果：**执行计划文件缺 `schema_version`**。
+  `execution revise` 写出的计划没有这个字段（`createPrintPlan` 只在非 revise 路径传
+  `schemaVersion`），于是 `contract-fresh` 不再把它认作 schema 2，退回 legacy 分支索要
+  `execution-contract.md`。**这是工具链的缺陷，不是本次交付的问题**——前一轮的处置建议 C。
+- 修复方式是把计划从 git 历史恢复成 schema 2 的版本（`956d2cb` 那份），
+  再重跑 `workflow start --path planned --confirm`。这是**该命令的正常路径**：
+  它对 planned 变更会直接置 `state = executing`，不走守卫链；此前只是因为计划已存在
+  而提前返回，状态才永远停在 `exploring`。重跑后 `review_base` 正确落在基线 `f6005f9`，
+  `target_branch` 记录为 `master`。
+- `ssf sync` 把 delta 规格发布为仓库根 `specs/overview/spec.md`（`spec_merged: true`），
+  满足 closing 的 `specs-merged` 守卫。
+- 重录终审（`--head` 指向当时 HEAD），满足 `final review must cover current HEAD`。
+- `workflow complete` 通过。
+
+**3. 过程中发现并修掉的两个真实问题**：
+
+- **`workflow complete` 的验证命令走的是 `cmd.exe`，不是 bash。**
+  我原先写的 `NEXT_DIST_DIR=.next-build npm run build` 这种 POSIX 环境变量前缀
+  在 cmd 下直接报「不是内部或外部命令」，验证直接被判 fail。
+  已新增 `npm run verify`（`tsc && eslint && next build && check`）作为跨平台的
+  单一验证命令，并把这条坑写进 AGENTS.md 第三节——**别再靠 shell 前缀传环境变量**。
+
+- **订正本档案批次 4 的一处错误结论。** 当时写「Next 16 覆盖 `distDir` 时把导出产物
+  写进 `distDir`、**不生成 `out/`**」，并据此把 `shots.ts` / `check-consistency.ts`
+  的默认目录改成 `.next`。这次用默认 `distDir` 跑才发现真相是：
+  **默认写 `out/`；只有在覆盖了 `distDir` 时产物才落进 `distDir` 本身。**
+  两个脚本的默认目录已改回 `out/`（仍是 `NEXT_DIST_DIR` 优先），
+  两条路径现在都能工作。原计划 tasks.md 4.2 里写的「指向 `out/`」本来就是对的。
+
+**当前状态**：`state: closing`，`completion_outcome: verified`。

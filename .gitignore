@@ -1,0 +1,30 @@
+# dependencies
+node_modules/
+
+# next.js
+.next/
+.next-build/
+.next-toy/
+out/
+next-env.d.ts
+
+# build caches
+*.tsbuildinfo
+
+# env
+.env
+.env.*
+
+# data pipeline scratch (快照 data/models.json 需要提交，勿整目录忽略)
+data/.cache/
+data/raw/
+
+# generated assets
+public/search-index.json
+
+# screenshot output
+docs/shots/
+
+# os
+.DS_Store
+Thumbs.db

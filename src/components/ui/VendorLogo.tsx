@@ -1,4 +1,3 @@
-import type { CSSProperties } from 'react';
 import { logoFor } from '@/data/vendor-logos';
 import { readableOnDark } from '@/lib/color';
 import { cx } from './cx';
@@ -27,22 +26,24 @@ interface VendorLogoProps {
  *
  * 整体 `aria-hidden`：厂商名永远紧挨着它出现，把首字母再念一遍
  * 只会让读屏用户听到一个孤立的字符。
+ *
+ * **没有悬停态。** 此前绕一层 CSS 变量就是为了做「默认弱化 / hover 转亮」，
+ * 但标识是装饰、不可聚焦，给它悬停反馈等于承诺一个不存在的动作——
+ * 曾经 ~47 个标识一起亮。现在直接写 `color`，不再需要那层间接。
  */
 export function VendorLogo({ vendorId, name, brandColor, size = 24, className }: VendorLogoProps) {
   const ref = logoFor(vendorId);
 
   /* 品牌色必须先提亮才能在深色底上当文字用；xAI 那种近黑色号不提亮等于隐形 */
-  const tone = brandColor ? readableOnDark(brandColor, 0.42) : undefined;
-  /* 走 CSS 变量而不是直接写 color，才能同时拥有「默认弱化」与「hover 转亮」 */
-  const vars = { '--logo-tone': tone ?? 'var(--color-fg-muted)' } as CSSProperties;
+  const tone = brandColor ? readableOnDark(brandColor, 0.42) : 'var(--color-fg-muted)';
 
   if (ref) {
     return (
       <span
         aria-hidden
-        className={cx('inline-block shrink-0 bg-current text-[var(--logo-tone)] hover:text-fg', className)}
+        className={cx('inline-block shrink-0 bg-current', className)}
         style={{
-          ...vars,
+          color: tone,
           width: size,
           height: size,
           maskImage: `url(/logos/${ref.file}.svg)`,
@@ -66,11 +67,10 @@ export function VendorLogo({ vendorId, name, brandColor, size = 24, className }:
         className,
       )}
       style={{
-        ...vars,
         width: size,
         height: size,
         fontSize: Math.round(size * 0.5),
-        color: 'var(--logo-tone)',
+        color: tone,
         background: brandColor
           ? `color-mix(in srgb, ${brandColor} 18%, transparent)`
           : 'var(--color-raised)',

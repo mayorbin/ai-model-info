@@ -21,13 +21,21 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-20 border-b border-line bg-base/95 backdrop-blur">
       <div className="page-shell flex h-14 items-center gap-4">
-        <span className="shrink-0 text-base font-semibold tracking-tight text-fg">
+        {/*
+          真 <h1>。首页此前一个 h1 都没有，文档大纲直接从 h2 开始，
+          读屏用户的标题导航会整层缺失。
+
+          16px 是为了**不低于自己的 h2**（分区标题也是 16px/600）——曾经是 14px，
+          标题层级的最上层反而比第二层小。另外去掉了 tracking-tight：负字距对 CJK
+          是错的，中文没有英文那种需要收紧的字距对。
+        */}
+        <h1 className="shrink-0 text-lg font-semibold text-fg">
           {dict.siteName}
-        </span>
+        </h1>
 
         {/* 搜索在本次变更范围外，这里只占位，不做成假输入框骗取点击 */}
         <span
-          className="hidden h-7 max-w-[220px] flex-1 items-center rounded-sm border border-line bg-inset px-2.5 text-2xs text-fg-faint md:flex"
+          className="hidden h-7 max-w-[220px] flex-1 items-center rounded-sm border border-line bg-inset px-2.5 text-2xs text-fg-dim md:flex"
           title="搜索尚未接入（不在本次变更范围内）"
         >
           搜索模型 / 厂商 / 能力

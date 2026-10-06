@@ -27,11 +27,29 @@
   --color-line-strong: #323a4b; /* hover / 选中边框 */
   --color-line-focus: #4d6fa8; /* 焦点环 */
 
-  /* ── 文字 ────────────────────────────────────────────────── */
-  --color-fg: #e6eaf2; /* 主文字，on base 约 14:1 */
-  --color-fg-muted: #9aa4b8; /* 次要文字、说明，约 7:1 */
-  --color-fg-dim: #6b7488; /* 弱化：标签、单位、计数，约 4.6:1 */
-  --color-fg-faint: #474f60; /* 禁用态 */
+  /*
+   * ── 文字 ──────────────────────────────────────────────────
+   * 对比度是**一条连续的阶梯**，不是一个可以拧大的旋钮。
+   *
+   * 实测（WCAG 2.1 相对亮度，浏览器里量的）发现原来的取值是双峰的：
+   * `--fg` 开到 16.01:1（2.3 倍 AAA）会让近白笔画在深底上发虚（halation），
+   * 而解释这些数字含义的 11px 灰字只有 3.93:1、低于 AA 的 4.5:1。
+   * 读者先被过曝的白打到，再去看读不动的灰——**两个症状都真实，且是同一个病**：
+   * 区间被拉爆了，中间 12–15:1 那一档完全是空的。
+   *
+   * 现在两端收进 12.83 / 7.70 / 6.41 / 3.44，阶梯连续，12–15:1 那一档被填上。
+   * 注释里的数字都是量出来的，改值前请重新实测。
+   */
+  --color-fg: #ccd3e0; /* 主文字。base 12.83:1 / panel 12.25:1，AAA */
+  --color-fg-muted: #9aa4b8; /* 次要文字、说明。base 7.70:1 / panel 7.35:1，AAA。位置本就正确，别动 */
+  --color-fg-dim: #8b95a9; /* 标签、单位、计数、事实行。base 6.41:1 / panel 6.12:1，过 AA */
+  /*
+   * 只表示 disabled，**不承载任何信息文本**。
+   * 抬到 #5d687d 也只有 3.44:1，够不到正文 AA 的 4.5:1；再往上抬就会撞上
+   * `--fg-dim`、两者失去区分度。WCAG 对 disabled 控件有豁免，所以正确的做法
+   * 不是把它抬到达标，而是把它收回成纯禁用态——信息文本一律改用 `--fg-dim`。
+   */
+  --color-fg-faint: #5d687d;
 
   /* ── 语义色 ──────────────────────────────────────────────── */
   --color-accent: #5b8cff; /* 主操作、链接、焦点 */
@@ -40,6 +58,13 @@
   --color-neg: #f85149; /* 劣于 / 退役 / 数据源失败 */
   --color-warn: #d29922; /* 部分数据缺失 */
   --color-gold: #e3b341; /* 榜首 / 冠军 */
+
+  /*
+   * 能力条空槽的描边。它**必须 ≥3:1**（WCAG 1.4.11 非文本对比）：那一圈是
+   * 「8 格里的第几格」这个分母唯一的载体，用 `--line`（1.27:1）时它等于不可见，
+   * 低视力读者会看到三颗蓝点而不是「3 / 8」。实测 3.14:1 on panel。
+   */
+  --color-meter-empty: #5c6577;
 
   /*
    * ── 区域识别色 ────────────────────────────────────────────
@@ -62,18 +87,34 @@
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
 
   /*
-   * ── 字号阶梯 ──────────────────────────────────────────────
-   * 全站只用这八档。注意 sm/base 与 Tailwind 默认不同（13/14 而非 14/16）：
-   * 这是有意的——数据密集型界面的正文基准是 14px，不是 16px。
+   * 深底浅字要在三个感知轴上同时补偿（额外行高、额外字距、必要时提一档字重），
+   * 否则细笔画的字会在暗场里互相吞掉。0.06em 是 design.md §2 早就写明的值，
+   * 此前只写在文档里、没落进实现，这里补上——`text-2xs` / `text-xs` 全站一次性生效。
+   *
+   * **行高必须逐个显式声明。** Tailwind 给这几个标准尺寸名各配了一个
+   * `--text-*--line-height` 比值，而那些比值是按它自己的默认字号（0.75 / 0.875 / 1.125rem…）
+   * 算出来的。只换字号、不换比值，就会得到一个非单调的阶梯：实测 12px 的行高是 1.333，
+   * 全阶梯最紧的一档，而 11px 因为没有配对值反而继承了 body 的 1.6、成为最松的一档——
+   * 正好是「小字要更松」的反面。所以这里把八个比值全部钉死，阶梯随字号增大而单调不增。
    */
   --text-2xs: 11px;
+  --text-2xs--letter-spacing: 0.06em;
+  --text-2xs--line-height: 1.6;
   --text-xs: 12px;
+  --text-xs--letter-spacing: 0.03em;
+  --text-xs--line-height: 1.6;
   --text-sm: 13px;
+  --text-sm--line-height: 1.6;
   --text-base: 14px;
+  --text-base--line-height: 1.6;
   --text-lg: 16px;
+  --text-lg--line-height: 1.5;
   --text-xl: 20px;
+  --text-xl--line-height: 1.4;
   --text-2xl: 26px;
+  --text-2xl--line-height: 1.25;
   --text-3xl: 34px;
+  --text-3xl--line-height: 1.15;
 }
 
 @layer base {
@@ -92,6 +133,17 @@
     font-synthesis: none;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* 浏览器自带的界面件也属于这套配色，漏掉它们最容易被看出来是「拼装」的 */
+    caret-color: var(--color-accent);
+  }
+
+  /*
+   * 滚动条是这套界面里面积最大的浏览器默认件。不主题化的话，深色页面上会挂着
+   * 一条与配色无关的浅色槽——这是最便宜、也最常被跳过的一处信号。
+   */
+  * {
+    scrollbar-color: var(--color-line-strong) var(--color-void);
+    scrollbar-width: thin;
   }
 
   /*
@@ -106,7 +158,8 @@
 
   ::selection {
     background: var(--color-accent);
-    color: #fff;
+    /* 不能用白字：白压在 --accent 上只有 3.16:1，不达 AA。用最深的一档 = 6.33:1 */
+    color: var(--color-void);
   }
 }
 

@@ -77,8 +77,9 @@ export function VendorSection({ roster, modelsByVendor, apt, now }: VendorSectio
         </div>
       ))}
 
+      {/* 「还有 N 家」是这一页唯一披露 617 个模型没有全部展示的地方，必须读得清 */}
       {roster.others.length > 0 && (
-        <p className="mt-4 text-2xs text-fg-faint">
+        <p className="mt-4 text-2xs text-fg-dim">
           {dict.plaza.moreVendors(roster.others.length)}
         </p>
       )}
@@ -99,7 +100,13 @@ function VendorBlock({ entry, modelsByVendor, apt, now }: VendorBlockProps) {
   const newer = newerThanFlagship(model, modelsByVendor.get(vendor.id) ?? [model]);
 
   return (
-    <div className="flex min-w-0 flex-col gap-2">
+    /*
+     * `<article>` + `<h3>` 不只是语义装饰：此前这 40 个厂商块是 div 里的一串裸 span，
+     * 读屏用户听到的是一条没有地标的连续名字流，标题导航也只到 h2 就断了。
+     * `data-vendor` 同时是 `check-consistency.ts` 的稳定计数锚点——
+     * 那个脚本原先靠匹配一串 className 计数，改一次样式就会误报。
+     */
+    <article data-vendor={vendor.id} className="flex min-w-0 flex-col gap-2">
       <div className="flex min-w-0 items-center gap-2">
         <VendorLogo
           vendorId={vendor.id}
@@ -107,9 +114,10 @@ function VendorBlock({ entry, modelsByVendor, apt, now }: VendorBlockProps) {
           brandColor={vendor.accentColor}
           size={24}
         />
-        <span className="min-w-0 flex-1 truncate text-sm font-semibold text-fg">
+        {/* 厂商名是**标签**不是内容：降为 12px/500 弱化色，把 13px/600 让给模型名独占 */}
+        <h3 className="min-w-0 flex-1 truncate text-xs font-medium text-fg-muted">
           {vendor.nameZh}
-        </span>
+        </h3>
       </div>
 
       <ModelCard model={model} vendor={vendor} apt={apt.rowOf(model)} now={now} />
@@ -129,6 +137,6 @@ function VendorBlock({ entry, modelsByVendor, apt, now }: VendorBlockProps) {
           <span className="min-w-0 truncate">{newer.name}</span>
         </p>
       )}
-    </div>
+    </article>
   );
 }

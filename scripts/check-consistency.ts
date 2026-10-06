@@ -52,7 +52,12 @@ const html = readFileSync(resolve(exportDir, 'index.html'), 'utf8')
   .replace(/<script[\s\S]*?<\/script>/g, '')
   .replace(/<!--.*?-->/g, '');
 
-const blockMarker = 'min-w-0 flex-1 truncate text-sm font-semibold text-fg';
+/*
+ * 计数锚点用 `data-vendor` 属性，不要用 className。
+ * 这个脚本曾经靠匹配一串 className 统计厂商块，结果一次样式调整（厂商名降级）
+ * 就让计数变成 0、误报成"分组块丢失"。**样式会变，语义锚点不会。**
+ */
+const blockMarker = 'data-vendor=';
 const blocks = html.split(blockMarker).length - 1;
 check(blocks === entries, `厂商分组块数 ${blocks} == roster entries 合计 ${entries}`);
 

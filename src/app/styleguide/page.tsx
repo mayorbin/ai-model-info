@@ -52,7 +52,7 @@ export default function StyleguidePage() {
         <SectionHeading title="设计 token" count={`${TOKEN_GROUPS.reduce((n, g) => n + g.tokens.length, 0)} 个`} />
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {TOKEN_GROUPS.map((group) => (
-            <Panel key={group.title} className="p-3" interactive={false}>
+            <Panel key={group.title} className="p-3">
               <div className="text-2xs text-fg-dim">{group.title}</div>
               <ul className="mt-2 space-y-1.5">
                 {group.tokens.map((token) => (
@@ -72,18 +72,16 @@ export default function StyleguidePage() {
 
       <section className="mt-8">
         <SectionHeading title="Panel" />
-        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
           <Panel className="p-4">
             <div className="text-sm font-medium">普通面板</div>
             <p className="mt-1 text-2xs text-fg-muted">1px 边框 + 6px 圆角，无阴影</p>
           </Panel>
-          <Panel className="p-4" accentColor="var(--color-west)">
-            <div className="text-sm font-medium">带识别色竖条</div>
-            <p className="mt-1 text-2xs text-fg-muted">左缘 3px inset 阴影，不挤动排版</p>
-          </Panel>
-          <Panel className="p-4" interactive={false}>
-            <div className="text-sm font-medium">不可交互</div>
-            <p className="mt-1 text-2xs text-fg-muted">悬停不提亮，用于静态容器</p>
+          <Panel className="p-4">
+            <div className="text-sm font-medium">卡片即容器</div>
+            <p className="mt-1 text-2xs text-fg-muted">
+              悬停态是控件的特权，容器不发光、也不带彩色边
+            </p>
           </Panel>
         </div>
       </section>
@@ -101,13 +99,13 @@ export default function StyleguidePage() {
       <section className="mt-8">
         <SectionHeading title="MetricBar" count="8 格" />
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          <Panel className="p-4" interactive={false}>
+          <Panel className="p-4">
             <MetricBar label="聪明" fill={0.92} literal="世界#1" title="悬停全文承载出处与样本量" />
             <MetricBar label="编程" fill={0.5} literal="很强" className="mt-3" />
             <MetricBar label="记性" fill={0.03} literal="4K" className="mt-3" title="有数据但很弱，至少点亮一格" />
             <MetricBar label="便宜" fill={null} literal={null} className="mt-3" title="没有数据：空槽，与 0 分不是一回事" />
           </Panel>
-          <Panel className="p-4" interactive={false}>
+          <Panel className="p-4">
             <MetricBar label="聪明" fill={1} literal="162" tone="var(--color-gold)" />
             <MetricBar label="编程" fill={0} literal="$0.10" className="mt-3" title="确实为 0：一格不亮" />
             <MetricBar label="记性" fill={0.68} literal="1M" className="mt-3" />
@@ -147,7 +145,7 @@ export default function StyleguidePage() {
           {vendors.map((v) => {
             const ref = logoFor(v.id);
             return (
-              <Panel key={v.id} as="li" className="flex items-center gap-3 p-2.5">
+              <Panel key={v.id} as="li" className="flex min-w-0 items-center gap-3 p-2.5">
                 <VendorLogo vendorId={v.id} name={v.nameZh} brandColor={v.accentColor} size={20} />
                 <VendorLogo vendorId={v.id} name={v.nameZh} brandColor={v.accentColor} size={24} />
                 <VendorLogo vendorId={v.id} name={v.nameZh} brandColor={v.accentColor} size={32} />

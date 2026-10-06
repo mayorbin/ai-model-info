@@ -80,7 +80,7 @@ export function ModelCard({ model, vendor, apt, now }: ModelCardProps) {
         <span className="min-w-0 truncate">{vendor.nameZh}</span>
         {date != null && (
           <>
-            <span aria-hidden className="shrink-0 text-fg-faint">
+            <span aria-hidden className="shrink-0 text-line-strong">
               ·
             </span>
             <span className="tnum shrink-0">{date}</span>
@@ -88,7 +88,7 @@ export function ModelCard({ model, vendor, apt, now }: ModelCardProps) {
         )}
         {openness != null && (
           <>
-            <span aria-hidden className="shrink-0 text-fg-faint">
+            <span aria-hidden className="shrink-0 text-line-strong">
               ·
             </span>
             <span className="shrink-0">{openness}</span>

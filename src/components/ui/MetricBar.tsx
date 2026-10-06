@@ -35,7 +35,7 @@ export function MetricBar({ fill, label, literal, tone, title, className }: Metr
 
   return (
     <div className={cx('flex items-center gap-2', className)} title={title}>
-      {label != null && <span className="w-7 shrink-0 text-2xs text-fg-dim">{label}</span>}
+      {label != null && <span className="w-8 shrink-0 text-xs text-fg-dim">{label}</span>}
 
       <span className="flex gap-[2px]" role="presentation">
         {Array.from({ length: CELLS }, (_, i) => (
@@ -43,14 +43,19 @@ export function MetricBar({ fill, label, literal, tone, title, className }: Metr
             key={i}
             className={cx(
               'h-2.5 w-2.5 rounded-sm',
-              i >= filled && 'border border-line bg-inset',
+              /*
+               * 空格子用 --meter-empty（3.14:1）而不是 --line-strong（1.62:1）或
+               * --line（1.27:1）：这一圈是「8 格里的第几格」这个分母唯一的载体，
+               * WCAG 1.4.11 要求承载含义的图形 ≥3:1。
+               */
+              i >= filled && 'border border-meter-empty bg-inset',
             )}
             style={i < filled ? { background: tone ?? 'var(--color-accent)' } : undefined}
           />
         ))}
       </span>
 
-      <span className="tnum ml-auto shrink-0 text-2xs text-fg-dim">{literal ?? '—'}</span>
+      <span className="tnum ml-auto shrink-0 text-xs text-fg-dim">{literal ?? '—'}</span>
     </div>
   );
 }

@@ -89,12 +89,30 @@ async function main() {
       });
       const response = await page.goto(`http://localhost:${PORT}${route}`, { waitUntil: 'networkidle' });
 
-      const box = await page.evaluate(() => ({
-        scroll: document.documentElement.scrollWidth,
-        client: document.documentElement.clientWidth,
-      }));
+      /*
+       * 溢出检查要连**是谁溢出的**一起报。只报一个页面级数字，排查时还得另写探针；
+       * 顺手把越界的元素列出来，这个自查才真正能定位问题。
+       */
+      const box = await page.evaluate(() => {
+        const vw = document.documentElement.clientWidth;
+        const offenders: string[] = [];
+        document.querySelectorAll<HTMLElement>('body *').forEach((el) => {
+          const r = el.getBoundingClientRect();
+          if (r.width === 0 || r.right <= vw + 1) return;
+          const text = (el.textContent ?? '').trim().slice(0, 30);
+          offenders.push(`right=${Math.round(r.right)} <${el.tagName.toLowerCase()}> "${text}"`);
+        });
+        return {
+          scroll: document.documentElement.scrollWidth,
+          client: vw,
+          offenders: offenders.slice(0, 5),
+        };
+      });
       if (box.scroll > box.client + 1) {
-        overflow.push(`${route} @${vp.width}: 横向溢出 ${box.scroll}px > ${box.client}px`);
+        overflow.push(
+          `${route} @${vp.width}: 横向溢出 ${box.scroll}px > ${box.client}px` +
+            (box.offenders.length > 0 ? `\n      ${box.offenders.join('\n      ')}` : ''),
+        );
       }
 
       const name = `${route === '/' ? 'home' : route.replace(/^\/|\/$/g, '').replace(/\//g, '-')}-${vp.width}`;

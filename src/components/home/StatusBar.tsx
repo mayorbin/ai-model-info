@@ -30,18 +30,19 @@ export function StatusBar({ snapshot }: { snapshot: WorldSnapshot }) {
   return (
     <div className="page-shell flex flex-wrap items-center gap-x-2.5 gap-y-1 py-2 text-2xs text-fg-dim">
       <span className="inline-flex items-center gap-1.5">
-        <span
-          aria-hidden
-          className="h-2 w-2 shrink-0 rounded-full"
-          style={{ background: tone, boxShadow: `0 0 6px ${tone}` }}
-        />
+        {/*
+          没有辉光。此前这里挂了 `box-shadow: 0 0 6px`，是这套明令禁止渐变光晕的
+          系统里唯一的辉光——零偏移的彩色光晕是装饰，不是深度，删掉。灯本身的颜色
+          已经足够传达状态，何况旁边永远跟着「数据源 10/10」的文字。
+        */}
+        <span aria-hidden className="h-2 w-2 shrink-0 rounded-full" style={{ background: tone }} />
         <span className="tnum">{dict.hud.updatedAt(snapshot.generatedAt.slice(0, 10))}</span>
       </span>
-      <span aria-hidden className="text-fg-faint">
+      <span aria-hidden className="text-line-strong">
         ·
       </span>
       <span className="tnum">{dict.hud.modelCount(alive, snapshot.vendors.length)}</span>
-      <span aria-hidden className="text-fg-faint">
+      <span aria-hidden className="text-line-strong">
         ·
       </span>
       <span className="tnum">{dict.hud.sources(ok, sources.length)}</span>

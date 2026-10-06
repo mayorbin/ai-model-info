@@ -3,7 +3,11 @@
 深色数据终端风格的 LLM 厂商与模型信息站。数据层与派生逻辑移植自 `ai-model-world`，
 UI 层完全重写：不使用像素小人风格，厂商身份由**官方品牌 logo** 表达。
 
-当前变更的设计与任务见 `changes/ui-rebuild-terminal/`（`design.md` 是视觉规格的单一事实来源）。
+视觉规格的**单一事实来源是根目录的 `DESIGN.md`**（token 数值、对比度、组件规则）。
+`changes/ui-rebuild-terminal/design.md` 是那次变更的历史规格——它有若干处已被后续实测推翻，
+读它时以 `DESIGN.md` 为准，不要拿它当现行口径。
+
+各次变更的设计与任务见 `changes/<name>/`。
 
 ---
 

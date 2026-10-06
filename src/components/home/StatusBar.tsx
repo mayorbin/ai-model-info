@@ -28,7 +28,11 @@ export function StatusBar({ snapshot }: { snapshot: WorldSnapshot }) {
   const alive = snapshot.models.filter((m) => !m.retiredAt).length;
 
   return (
-    <div className="page-shell flex flex-wrap items-center gap-x-2.5 gap-y-1 py-2 text-2xs text-fg-dim">
+    /*
+     * 用 --fg-muted 而不是 --fg-dim：这是**页面级状态**（数据新旧、规模、源健康度），
+     * 不是周边的说明文字。全站用量此前堆在两端、中间那档没人用，这是把它用起来的其中一处。
+     */
+    <div className="page-shell flex flex-wrap items-center gap-x-2.5 gap-y-1 py-2 text-2xs text-fg-muted">
       <span className="inline-flex items-center gap-1.5">
         {/*
           没有辉光。此前这里挂了 `box-shadow: 0 0 6px`，是这套明令禁止渐变光晕的

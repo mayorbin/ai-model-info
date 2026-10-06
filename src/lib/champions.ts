@@ -63,15 +63,17 @@ function releaseTime(m: ModelRecord): number | null {
 
 /**
  * 在候选里找一个「值最大」的模型。同值时 ECI 高者优先、再按 id 字典序，保证确定性。
- * `value` 返回 null 的模型不参与。
+ * `value` 返回 null 的模型不参与。`exclude` 里已有的型号直接跳过。
  */
 function best(
   pool: ModelRecord[],
   value: (m: ModelRecord) => number | null,
   order: 'desc' | 'asc' = 'desc',
+  exclude?: ReadonlySet<string>,
 ): { model: ModelRecord; value: number } | null {
   let pick: { model: ModelRecord; value: number } | null = null;
   for (const m of pool) {
+    if (exclude?.has(m.id)) continue;
     const v = value(m);
     if (v == null) continue;
     if (!pick) {
@@ -108,6 +110,26 @@ export function buildChampions(
   const trusted = alive.filter((m) => registryHas(m.vendorId));
 
   const out: Champion[] = [];
+
+  /*
+   * 每个头衔只能由**不同型号**认领。实测出现过 Kimi K3 同时占「国内第一」与
+   * 「开源第一」（ECI 都是 157），八格里其实只有七个不同答案。
+   *
+   * 撞车时让后一个头衔**顺位给下一名**，而不是留空——「开源第一」宁可给第二名，
+   * 也不能和「国内第一」指同一行。**这没有碰任何评分口径**：评分与排序一字未改，
+   * 只是在首选已被占用时取该头衔的次优。
+   */
+  const used = new Set<string>();
+  const pickBest = (
+    pool: ModelRecord[],
+    value: (m: ModelRecord) => number | null,
+    order: 'desc' | 'asc' = 'desc',
+  ) => {
+    const hit = best(pool, value, order, used);
+    if (hit) used.add(hit.model.id);
+    return hit;
+  };
+
   const push = (
     key: ChampionKey,
     hit: { model: ModelRecord; value: number } | null,
@@ -127,7 +149,7 @@ export function buildChampions(
 
   push(
     'smart',
-    best(alive, (m) => m.benchmarks.eci),
+    pickBest(alive, (m) => m.benchmarks.eci),
     (v) => `ECI ${v.toFixed(0)}`,
     () => `综合智力指数，${scored.length} 个受测模型中第一`,
   );
@@ -139,35 +161,35 @@ export function buildChampions(
    */
   push(
     'code',
-    best(alive, (m) => codingOf(m)?.score ?? null),
+    pickBest(alive, (m) => codingOf(m)?.score ?? null),
     (v) => `前 ${Math.max(1, Math.round((1 - v) * 100))}%`,
     (_v, m) => `${codingOf(m)!.leagues} 个第三方编程榜的平均排名最高`,
   );
 
   push(
     'value',
-    best(alive, valueOf),
+    pickBest(alive, valueOf),
     (_v, m) => `${shortPrice(m.pricing.outputPerMTok!)}/M`,
     (_v, m) => `智力全球 #${ranks.get(m.id)}，价格远低于同级`,
   );
 
   push(
     'cheap',
-    best(scored, textPrice, 'asc'),
+    pickBest(scored, textPrice, 'asc'),
     (v) => `${shortPrice(v)}/M`,
     () => '有第三方评测成绩的模型里，输出最便宜',
   );
 
   push(
     'memory',
-    best(scored, (m) => m.contextWindow),
+    pickBest(scored, (m) => m.contextWindow),
     (v) => `${formatCount(v)} tokens`,
     () => '上下文窗口，一次能读进去的字数',
   );
 
   push(
     'newest',
-    best(
+    pickBest(
       trusted.filter((m) => {
         const t = releaseTime(m);
         return t != null && t <= now.getTime();
@@ -183,7 +205,7 @@ export function buildChampions(
 
   push(
     'east',
-    best(
+    pickBest(
       alive.filter((m) => vendorOf.get(m.vendorId)?.continent === 'east'),
       (m) => m.benchmarks.eci,
     ),
@@ -193,7 +215,7 @@ export function buildChampions(
 
   push(
     'open',
-    best(
+    pickBest(
       alive.filter((m) => m.openWeights === true),
       (m) => m.benchmarks.eci,
     ),

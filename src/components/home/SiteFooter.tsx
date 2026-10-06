@@ -29,8 +29,11 @@ export function SiteFooter({ snapshot }: { snapshot: WorldSnapshot }) {
         <span className="tnum min-w-0 basis-full sm:flex-1">
           {ok.length > 0 ? ok.join(' · ') : '本次同步没有任何数据源成功'}
         </span>
-        {/* 快照日期是读者用来判断这页可不可信的锚点，不能是全页最读不清的一行 */}
-        <span className="tnum text-fg-dim">快照 {snapshot.generatedAt.slice(0, 10)}</span>
+        {/*
+          快照日期是读者用来判断这页可不可信的锚点，不能是全页最读不清的一行。
+          用 muted 而不是 dim：它是**状态**，不是标签。
+        */}
+        <span className="tnum text-fg-muted">快照 {snapshot.generatedAt.slice(0, 10)}</span>
       </div>
     </footer>
   );

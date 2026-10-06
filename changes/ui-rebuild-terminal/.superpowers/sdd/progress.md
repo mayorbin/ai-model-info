@@ -189,3 +189,10 @@
 - 页内锚点跳转（两区共 40 块，整页较长）。
 - 「最聪明是 Claude Opus 5.5、同一张卡片上编程显示偏弱」的观感问题（批次 3 已详述，
   属既有设计而非回归，改动需单独立项）。
+## Execution Plan Resync
+- recorded_at: 2026-10-06T09:56:38.214Z
+- reason: tasks.md 勾选各批次已完成项；design.md 订正两处与实现脱节的文字（状态行示例数字 512/45→617/65、卡片底部构成）。均为非语义修正：范围、批次划分与验收标准未变。
+- previous_artifacts_hash: sha256:87326f2cdc978873c483c272231c2d0c8178ed46e3f5a9eb50b0b4a5d9c965e1
+- artifacts_hash: sha256:ef64a8b464f9eb7e10782cd89414ac72e6cfb155ff446e8f74b09d414b8cd452
+- plan_hash: sha256:ab0fd0a7183c54d3af47e5a56613b99661b5b970e8d17f56d5146316baa35140
+- plan_revision: 1

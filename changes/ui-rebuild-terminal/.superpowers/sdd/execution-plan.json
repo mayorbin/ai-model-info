@@ -30,11 +30,11 @@
       "depends_on": []
     }
   ],
-  "artifacts_hash": "sha256:87326f2cdc978873c483c272231c2d0c8178ed46e3f5a9eb50b0b4a5d9c965e1",
+  "artifacts_hash": "sha256:ef64a8b464f9eb7e10782cd89414ac72e6cfb155ff446e8f74b09d414b8cd452",
   "contract_hash": null,
   "workflow": "full",
   "revision": 1,
   "schema_version": 2,
   "review_policy": "final",
-  "hash": "sha256:0efee60df14075dea3f472ebfcde06fcfd313a655b1bfdd316eb152b51c3cbaa"
+  "hash": "sha256:ab0fd0a7183c54d3af47e5a56613b99661b5b970e8d17f56d5146316baa35140"
 }

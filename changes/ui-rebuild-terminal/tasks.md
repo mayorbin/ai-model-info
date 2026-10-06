@@ -13,12 +13,12 @@
 
 ### 批次 1 · 脚手架与数据层移植
 
-- [ ] **1.1 建立工程脚手架**：新建 `package.json`（next 16 / react 19 / tailwind 4 / tsx / playwright，devDeps 去除 sharp）、`tsconfig.json`、`next.config.ts`（保留 `output: 'export'`、`trailingSlash: true`、`images.unoptimized: true`，**删除** `NEXT_BASE_PATH` 分支）、`postcss.config.mjs`、`eslint.config.mjs`、`.gitignore`。证明：`npm run build` 在临时首页上通过。
-- [ ] **1.2 原样移植纯数据层**：复制 `src/data/{vendor-registry,coding-leagues,benchmark-registry,official-scores}.ts` 与 `src/lib/{types,snapshot,sample-snapshot,scores,kind,format,color,coding-consensus,outbound}.ts`，改 `@/` 别名指向新工程。**不复制** `crests.ts`、`sprite*`、`assets.ts`。证明：`npx tsc --noEmit`。
-- [ ] **1.3 拆分 `derive.ts`**：只保留评分半区 `buildPriceScale` / `buildSizeScale` / `buildValueScore` / `daysSince` / `rankByEci` / `TIER_SCALE`；删除角色视觉半区 `garmentOf` / `crownOf` / `lifeStageOf` / `signsOf` / `buildComputerScale` / `bookshelfOf` / `shelfDustOf` / `visualOf` / `buildVisualPruning` / `isSingleSource` / `CharacterVisual`。证明：`grep -nE "garmentOf|bookshelfOf|visualOf|crownOf|lifeStageOf" src/lib/derive.ts` 无输出 且 `npx tsc --noEmit`。
-- [ ] **1.4 移植派生层并去角色化**：复制 `champions.ts` / `roster.ts` / `aptitude.ts` / `coding-consensus.ts`，删掉其中的角色视觉字段与文案；重写 `i18n.ts` 词表，去掉「村落 / 小屋 / 居民 / 旅人 / 往生堂」一类措辞，改为「厂商 / 分组 / 已退役」。证明：`grep -rnE "村落|小屋|居民|旅人|往生堂|家徽" src/lib src/components` 无输出 且 `npx tsc --noEmit`。
-- [ ] **1.5 落位数据快照**：复制 `data/models.json`、`data/benchmark-attribution.json`（不复制 `bilibili.json`、`params-tier.json`）。证明：`npx tsx -e "..."` 打印 `models` / `vendors` 数量且与源快照一致。
-- [ ] **1.6 首页最小可渲染冒烟页**：`src/app/page.tsx` 临时渲染「模型数 / 厂商数 / 前 20 个模型名」，验证 `loadSnapshot()` 在新工程 cwd 下能读到数据。证明：`npm run build` 成功且产出 `out/index.html`。
+- [x] **1.1 建立工程脚手架**：新建 `package.json`（next 16 / react 19 / tailwind 4 / tsx / playwright，devDeps 去除 sharp）、`tsconfig.json`、`next.config.ts`（保留 `output: 'export'`、`trailingSlash: true`、`images.unoptimized: true`，**删除** `NEXT_BASE_PATH` 分支）、`postcss.config.mjs`、`eslint.config.mjs`、`.gitignore`。证明：`npm run build` 在临时首页上通过。
+- [x] **1.2 原样移植纯数据层**：复制 `src/data/{vendor-registry,coding-leagues,benchmark-registry,official-scores}.ts` 与 `src/lib/{types,snapshot,sample-snapshot,scores,kind,format,color,coding-consensus,outbound}.ts`，改 `@/` 别名指向新工程。**不复制** `crests.ts`、`sprite*`、`assets.ts`。证明：`npx tsc --noEmit`。
+- [x] **1.3 拆分 `derive.ts`**：只保留评分半区 `buildPriceScale` / `buildSizeScale` / `buildValueScore` / `daysSince` / `rankByEci`；删除角色视觉半区 `garmentOf` / `crownOf` / `lifeStageOf` / `signsOf` / `buildComputerScale` / `bookshelfOf` / `shelfDustOf` / `visualOf` / `buildVisualPruning` / `isSingleSource` / `CharacterVisual`。证明：`grep -nE "garmentOf|bookshelfOf|visualOf|crownOf|lifeStageOf" src/lib/derive.ts` 无输出 且 `npx tsc --noEmit`。
+- [x] **1.4 移植派生层并去角色化**：复制 `champions.ts` / `roster.ts` / `aptitude.ts` / `coding-consensus.ts`，删掉其中的角色视觉字段与文案；重写 `i18n.ts` 词表，去掉「村落 / 小屋 / 居民 / 旅人 / 往生堂」一类措辞，改为「厂商 / 分组 / 已退役」。证明：`grep -rnE "村落|小屋|居民|旅人|往生堂|家徽" src/lib src/components` 无输出 且 `npx tsc --noEmit`。
+- [x] **1.5 落位数据快照**：复制 `data/models.json`、`data/benchmark-attribution.json`（不复制 `bilibili.json`、`params-tier.json`）。证明：`npx tsx -e "..."` 打印 `models` / `vendors` 数量且与源快照一致。
+- [x] **1.6 首页最小可渲染冒烟页**：`src/app/page.tsx` 临时渲染「模型数 / 厂商数 / 前 20 个模型名」，验证 `loadSnapshot()` 在新工程 cwd 下能读到数据。证明：`npm run build` 成功且产出 `out/index.html`。
 
 ### 批次 2 · 设计系统与图标层
 

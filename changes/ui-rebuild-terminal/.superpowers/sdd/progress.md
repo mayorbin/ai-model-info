@@ -203,3 +203,52 @@
 - artifacts_hash: sha256:4755a15beb1f539323707c706ac377b8c47f3640f816f40afdc07712cdc5cd44
 - plan_hash: sha256:93138991cca347213056ed083d639c3809ee782e645b685f094806da7cd9444b
 - plan_revision: 1
+
+---
+
+## 交付状态与 workflow 状态机的阻塞（需要用户裁决）
+
+**工程交付：完成。** 四个批次全部实现，19/19 任务已勾选，
+`tsc` / `eslint` / 静态构建全过，`npm run check` 12 条不变式全过，
+1440 / 390 两档截图无横向溢出，终审 verdict = pass。
+
+**workflow 记账：未能闭环，停在进行中。** 状态停在 `approved-for-build`，
+`execution_mode: inline`、DP-3 与 DP-4 均已补齐，执行计划为 revision 2。
+**`workflow complete` 无法执行**，原因是一条**工具链自身的缺陷**，不是本次交付的问题：
+
+1. 首次 `workflow start --path planned --confirm` 发生时仓库还没 `git init`，
+   命令在写状态字段前就失败了，只留下执行计划；随后重跑时因为计划已存在，
+   状态字段再也没被写。于是 `.spec-superflow.yaml` 停在 `exploring`、
+   `artifacts_hash` 与 `execution_mode` 均为空。
+2. 要走到 `executing` 只能沿 `exploring → specifying → bridging → approved-for-build → executing`。
+   这条链上的守卫是照 `workflow: full` 的 legacy 流程写的：
+   - `specifying → bridging` 要求 `specs/<capability>/spec.md`。本次是 **planned** 变更，
+     工具文档明确说 planned 只需要 proposal + tasks，specs 按需——但守卫不接受。
+     已补 `specs/overview/spec.md`（内容是已交付行为的可测约束，属真实产物）。
+   - `bridging → approved-for-build` 要求 `dp_3_result`。已按「用户在对话中已确认方案」
+     这一既有授权补记。
+   - `approved-for-build → executing` 要求 `dp_4_result`，而该字段**不允许手工 set**
+     （`SETTABLE_FIELDS` 只覆盖 dp_0/1/2/3/6/7），只能由写计划的命令产出；
+     计划已存在时 `execution plan` 拒绝执行，唯一的出口是 `execution revise`。
+   - 于是走了 `execution revise`（revision 2，模式与范围都不变）。**它写出的计划
+     缺了 `schema_version` 字段**，导致 `contract-fresh` 守卫不再把它认作 schema 2，
+     退回 legacy 分支，转而索要 `execution-contract.md`——而 that 文件正是
+     planned 变更被明确告知「不需要」的东西。
+
+**为什么就此停手**：再往前一步就只能手写一份 `execution-contract.md`，
+而它对应的审批环节并未发生。**为了让守卫通过而制造一个并不存在的审批产物，
+是在伪造流程记录**，比记账不闭环更糟。所以选择停手并如实上报。
+
+**建议的处置（三选一，请用户定）**：
+- **A（推荐）**：接受本次记账不闭环。工程交付与终审回执都是真实的，
+  状态留着 `approved-for-build` 并附上这份说明。
+- **B**：把 `.spec-superflow.yaml` 与 `.superpowers/sdd/` 一并重置，
+  用 `workflow start --path direct --scope ...` 重新登记为一次 bounded 变更——
+  代码不再改动，只为拿到一个能闭环的记账。需要你确认。
+- **C**：把这当成 spec-superflow 的一个缺陷上报：
+  「planned 变更在 full 工作流下无法抵达 executing」，
+  根因是 `execution revise` 丢失 `schema_version`，以及守卫链未按 `workflow_variant` 分流。
+
+**其余遗留项**（不阻塞，已在前文详述）：`/styleguide` 需排除出生产产物；
+`src/lib/scores.ts` 目前零引用（按计划为排行榜批次预留）；无页内锚点跳转；
+Claude Opus 5.5「编程 偏弱」的观感问题属既有设计；未做 Safari / Firefox 实测。

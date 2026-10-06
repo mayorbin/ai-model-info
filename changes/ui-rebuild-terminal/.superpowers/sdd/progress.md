@@ -45,3 +45,57 @@
 批次 3 实现状态行时按快照实际值渲染，并在收尾时订正 `design.md` 的示例数字。
 
 **下一动作**：批次 2 — 设计系统与图标层。
+
+## 批次 2 · 设计系统与图标层 — 完成
+
+**结果**：深色终端 token 与 6 个原子组件就位；65 家厂商的标识 100% 有可见呈现
+（39 家有官方 logo，26 家走单字徽章）；`/styleguide` 作为活体对照页可截图。
+
+**文件**：`src/app/globals.css`（重写）、`src/components/ui/{cx,Panel,StatNumber,MetricBar,Badge,SectionHeading,VendorLogo}.ts`、
+`src/data/vendor-logos.ts`、`scripts/vendor-logos.ts`、`scripts/shots.ts`、`src/app/styleguide/page.tsx`、`public/logos/`（39 个 SVG）。
+
+**验证**：
+- `npx tsc --noEmit` → exit 0；`npx eslint src scripts` → exit 0
+- 静态构建出新路由 `/styleguide`；产物 CSS 13.7 KB，逐个确认 `border-line` / `bg-panel` /
+  `text-2xs` / `bg-current` / `tnum` / `page-shell` / `duration-120` 等自定义工具类均已生成，
+  `--color-*` token 已作为 CSS 变量输出
+- Playwright 在 1440 / 390 两档截图 4 张（`docs/shots/`），**无横向溢出**
+- 全部 39 个 logo 的 viewBox 均为正方形（无字标混入），Sarvam 的官方 mark 经蒙版渲染正常
+
+**关键决策：图标来源与「能用」的判据**
+
+实测下来，`@lobehub/icons-static-svg`（MIT、零依赖、950 图标）覆盖 38/65；
+`simple-icons` 只覆盖约 15/45 且恰好在 OpenAI、Microsoft、Amazon、IBM、Cohere、xAI 上失手，
+因此改用 lobe-icons 为准。
+
+对 8 家未收录厂商的官网核实结果，只有 **Sarvam** 一个官方素材真正可用。
+另外 5 家虽有官方素材，但**在 20~32px 的单色槽位里都不能用**，故仍走单字徽章：
+- `aisingapore`：官网对自动化 403，唯一可得的是 GitHub 组织头像，304×304 **RGB 无 alpha**、
+  米色底——蒙版取不到形状（整块不透明），直接贴图则是一块亮方块。
+- `inclusionai`（蚂蚁百灵）：站点是纯 CSR 的 SPA，无 favicon、无静态 logo 文件；
+  标识只存在于 JS bundle 里的一个 Ant CDN 链接，600×712 彩色索引位图。
+- `sdaia`：只给出 792×275 的彩色马赛克组合标（含字标），且混着开发服务器注入的 script 块。
+- `trendyol`：官网全域对自动化 403，只借其开发者门户转取到 100×23 的字标。
+- `thinkingmachines`：官网 header 就是一行样式化文字，无 svg/img，favicon 是纯色方块。
+- `deepreinforce`：无官网。
+
+判据是：**槽位只有 20~32px 且按单色渲染，字标与彩色位图在这个尺寸下会糊成一团，
+比一个干净的首字徽章更糟。** 这条判据与来源同时登记在 `src/data/vendor-logos.ts` 的注释里。
+
+**计划偏差（非语义，已记录）**：
+1. **`VendorLogo` 始终 `aria-hidden`**，未按 design.md 第三节给兜底徽章加 `aria-label`。
+   原因：厂商名永远紧邻出现，而单字徽章的文字内容会让读屏用户听到一个孤立的字符
+   （如「智」「S」）。重复播报比静默更糟。
+2. **新增 `scripts/shots.ts`（本属 4.2）提前落地**。2.5 的证明是「截图」，没有截图工具
+   就无法验收，故把它提前到本批次。
+3. **`scripts/vendor-logos.ts` 是新文件**（计划只写了「复制 SVG」）。用一个脚本落盘而不是
+   手工 cp，是为了让 provenance 可复现、可审计；`source: 'official'` 的素材不由脚本下载，
+   构建不依赖网络，脚本只做存在性校验。
+4. **新增 `src/components/ui/cx.ts`**。6 个组件都要拼条件类名，属跨文件重复两次以上，
+   按 AGENTS.md 第二节抽取；不引 clsx（只有一种用法，换不来东西）。
+
+**待办（留给批次 4）**：
+- `/styleguide` 目前会进生产产物。上线前需要把它排除（或加环境判断），现阶段保留是为了截图验收。
+- `design.md` 4.2 的示例数字仍是「512 模型 · 45 厂商」，实际为 635 / 65，收尾时订正。
+
+**下一动作**：批次 3 — 首页广场重做。

@@ -22,11 +22,11 @@
 
 ### 批次 2 · 设计系统与图标层
 
-- [ ] **2.1 重写 `globals.css`**：按 `design.md` 第一、二节落全部 token（背景 5 级 / 描边 4 级 / 文字 4 级 / 语义色 / 区域色 / 圆角 / 间距）、系统无衬线 + 等宽数字分工、focus ring。删除像素字体 `@font-face`、`image-rendering: pixelated`、零圆角约定。证明：`grep -nE "pixel|Fusion Pixel|--radius-none" src/app/globals.css` 无输出。
-- [ ] **2.2 新增原子组件**：`src/components/ui/{Panel,StatNumber,MetricBar,Badge,SectionHeading}.tsx`，规格见 `design.md` 第三节。证明：`/styleguide` 页展示全部变体并截图。
-- [ ] **2.3 新增厂商 logo 映射与组件**：`src/data/vendor-logos.ts`（`vendorId → { slug, color }`，45 家全覆盖）+ `src/components/ui/VendorLogo.tsx`（20/24/32 三档、单色与品牌色两态、兜底单字徽章走 `readableOnDark()`）。证明：`/styleguide` 页渲染全部 45 家，无空白、无缺图。
-- [ ] **2.4 自托管 logo 资源**：把用到的 SVG 从 `@lobehub/icons-static-svg` 复制到 `public/logos/`，`package.json` 中该包降为 devDependency 或移除（构建期不依赖）；未收录的 8 家（`thinkingmachines` / `sdaia` / `trendyol` / `deepreinforce` / `aisingapore` / `sarvam` / `inclusionai` / `naver`）逐家核实官网可取得的官方 logo 并落地，确认取不到的显式登记为兜底。证明：`ls public/logos | wc -l` + 兜底徽章截图。
-- [ ] **2.5 新增 `/styleguide` 页**：仅开发用，不进导航（`design.md` 的活体对照）。证明：`npm run build` 后该路由可访问。
+- [x] **2.1 重写 `globals.css`**：按 `design.md` 第一、二节落全部 token（背景 5 级 / 描边 4 级 / 文字 4 级 / 语义色 / 区域色 / 圆角 / 间距）、系统无衬线 + 等宽数字分工、focus ring。删除像素字体 `@font-face`、`image-rendering: pixelated`、零圆角约定。证明：`grep -nE "pixel|Fusion Pixel|--radius-none" src/app/globals.css` 无输出。
+- [x] **2.2 新增原子组件**：`src/components/ui/{Panel,StatNumber,MetricBar,Badge,SectionHeading}.tsx`，规格见 `design.md` 第三节。证明：`/styleguide` 页展示全部变体并截图。
+- [x] **2.3 新增厂商 logo 映射与组件**：`src/data/vendor-logos.ts`（`vendorId → { slug, color }`，45 家全覆盖）+ `src/components/ui/VendorLogo.tsx`（20/24/32 三档、单色与品牌色两态、兜底单字徽章走 `readableOnDark()`）。证明：`/styleguide` 页渲染全部 45 家，无空白、无缺图。
+- [x] **2.4 自托管 logo 资源**：把用到的 SVG 从 `@lobehub/icons-static-svg` 复制到 `public/logos/`，`package.json` 中该包降为 devDependency 或移除（构建期不依赖）；未收录的 8 家（`thinkingmachines` / `sdaia` / `trendyol` / `deepreinforce` / `aisingapore` / `sarvam` / `inclusionai` / `naver`）逐家核实官网可取得的官方 logo 并落地，确认取不到的显式登记为兜底。证明：`ls public/logos | wc -l` + 兜底徽章截图。
+- [x] **2.5 新增 `/styleguide` 页**：仅开发用，不进导航（`design.md` 的活体对照）。证明：`npm run build` 后该路由可访问。
 
 ### 批次 3 · 首页广场重做
 

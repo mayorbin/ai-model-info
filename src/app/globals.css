@@ -1,1 +1,133 @@
 @import 'tailwindcss';
+
+/*
+ * 深色数据终端的设计 token。规格见 changes/ui-rebuild-terminal/design.md。
+ *
+ * 两条不可违背的约定：
+ *
+ * 1. **组件里不出现字面色值**（厂商品牌色除外，它来自数据）。所有颜色只在这里定义，
+ *    改一处配色只动这个文件。
+ * 2. **层级只靠背景明度与 1px 线**，不给卡片加阴影。暗色界面上阴影几乎不可见，
+ *    却会让每一层都糊成一团；明度递进是唯一在暗色里稳定成立的层级语言。
+ */
+
+@theme {
+  /* ── 背景层级：每级约 +3~5% 亮度 ─────────────────────────── */
+  --color-void: #07080b; /* 页面最底 */
+  --color-base: #0c0e13; /* 主内容区 */
+  --color-panel: #11141b; /* 卡片 / 面板 */
+  --color-raised: #171b24; /* hover 态、悬浮元素 */
+  --color-inset: #0a0c10; /* 内嵌槽（能力条底槽、输入框） */
+
+  /* ── 描边与分隔 ──────────────────────────────────────────── */
+  --color-line-faint: #191d26; /* 极淡分隔（表格行） */
+  --color-line: #232936; /* 标准边框 */
+  --color-line-strong: #323a4b; /* hover / 选中边框 */
+  --color-line-focus: #4d6fa8; /* 焦点环 */
+
+  /* ── 文字 ────────────────────────────────────────────────── */
+  --color-fg: #e6eaf2; /* 主文字，on base 约 14:1 */
+  --color-fg-muted: #9aa4b8; /* 次要文字、说明，约 7:1 */
+  --color-fg-dim: #6b7488; /* 弱化：标签、单位、计数，约 4.6:1 */
+  --color-fg-faint: #474f60; /* 禁用态 */
+
+  /* ── 语义色 ──────────────────────────────────────────────── */
+  --color-accent: #5b8cff; /* 主操作、链接、焦点 */
+  --color-accent-soft: #1b263f; /* accent 的底（chip / 选中行） */
+  --color-pos: #3fb950; /* 优于 / 上新 / 数据源正常 */
+  --color-neg: #f85149; /* 劣于 / 退役 / 数据源失败 */
+  --color-warn: #d29922; /* 部分数据缺失 */
+  --color-gold: #e3b341; /* 榜首 / 冠军 */
+
+  /*
+   * ── 区域识别色 ────────────────────────────────────────────
+   * 只允许出现在三处：分区标题左侧 3px 竖条、分区顶部一层 0→24px 的极淡色晕、
+   * 卡片分组头的竖条。不用于文字、不用于大面积填充。
+   */
+  --color-west: #4a9fd8; /* 国外 */
+  --color-east: #d4644f; /* 国内 */
+
+  /* ── 圆角 ────────────────────────────────────────────────── */
+  --radius-sm: 4px; /* 徽章、能力条格 */
+  --radius-md: 6px; /* 卡片、面板 */
+  --radius-lg: 10px; /* 大容器 */
+
+  /* ── 字体分工 ────────────────────────────────────────────── */
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei',
+    'Segoe UI', Roboto, sans-serif;
+  /* 数字一律等宽 —— 这是「终端感」的主要来源，也让跨行数字能对齐 */
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+
+  /*
+   * ── 字号阶梯 ──────────────────────────────────────────────
+   * 全站只用这八档。注意 sm/base 与 Tailwind 默认不同（13/14 而非 14/16）：
+   * 这是有意的——数据密集型界面的正文基准是 14px，不是 16px。
+   */
+  --text-2xs: 11px;
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-base: 14px;
+  --text-lg: 16px;
+  --text-xl: 20px;
+  --text-2xl: 26px;
+  --text-3xl: 34px;
+}
+
+@layer base {
+  html {
+    background: var(--color-void);
+    color-scheme: dark;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--color-base);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: 1.6;
+    font-synthesis: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /*
+   * 焦点环必须可见。任何 `outline: none` 都是可访问性 bug，
+   * 键盘用户会彻底失去位置感。
+   */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  ::selection {
+    background: var(--color-accent);
+    color: #fff;
+  }
+}
+
+/*
+ * 等宽数字。给所有读数、分数、价格、上下文长度、计数用。
+ * tabular-nums 让不同行的数字纵向对齐——这是它能被扫读的前提。
+ */
+@utility tnum {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
+/* 页壳。宽屏上导航与正文必须用同一个壳，否则导航贴屏幕边、正文却是居中的。 */
+@utility page-shell {
+  width: 100%;
+  max-width: 1360px;
+  margin-inline: auto;
+  padding-inline: 24px;
+}
+
+@media (max-width: 640px) {
+  .page-shell {
+    padding-inline: 16px;
+  }
+}

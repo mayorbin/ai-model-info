@@ -1,3 +1,5 @@
+import Link from 'next/link';
+import { Fragment } from 'react';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { DEFAULT_LANG, getDict } from '@/lib/i18n';
 import type { KindGroup } from '@/lib/kind';
@@ -5,45 +7,64 @@ import type { KindGroup } from '@/lib/kind';
 const dict = getDict(DEFAULT_LANG);
 
 /**
- * 按类型看：六个类目，一行排开，用「·」分隔。
+ * 按类型看：六个类目，每格给出计数与三个代表型号。
  *
  * 首页上展示的门面必然是对话模型，所以图像生成、视频生成、语音这三类
  * 在这里是它们唯一的露脸机会。
  *
- * **这六格不是控件，所以不能长成控件的样子。** 此前它们装在一个带 1px 边框的容器里、
- * 被 `flex-1` 拉成等宽、彼此用竖线分隔——读起来就是一条筛选条，
- * 而对应的路由不在交付范围内，于是六格一起看起来能点、点了什么都不发生。
- * 与曾经那 47 张发光卡片是同一个错误，只是这次错在形状而不是错在悬停。
+ * **这六个类目不是控件，所以不长成控件的样子**——没有边框、没有底色、没有 chip 外形，
+ * 只有「标签 计数」和下面一行代表型号。此前它们装在一个带 1px 边框的容器里、
+ * 被 `flex-1` 拉成等宽、彼此用竖线分隔，读起来就是一条筛选条，而对应路由不存在，
+ * 于是六格看起来都能点、点了什么都不发生（与曾经那 47 张发光卡片同源，只是错在形状）。
  *
- * 现在降级成一句陈述，用 StatusBar 已有的那个「标签 计数」句式。
- * 路由落地后再换成 <Link>，那时它才有资格长回控件的形状。
+ * **代表型号是链接**，而这不是把筛选条请回来：那三个型号真的有页面可去，
+ * 所以它们有资格长成链接。`kind.ts` 一直在算这三个名字（`representatives`），
+ * 此前没人渲染它——于是「图像生成 23」只告诉读者存在，不给任何抓手。
  */
 export function KindStrip({ groups }: { groups: KindGroup[] }) {
   return (
     <section aria-labelledby="kinds-heading">
       <SectionHeading id="kinds-heading" title={dict.kind.sectionTitle} />
-      <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm">
-        {groups.map((g, i) => (
-          /*
-           * 每一格是一个不可断开的 inline-flex，「·」跟在后一段前面而不是前一段后面。
-           * 窄屏下再把它整个隐去（只留间距）——绑到后一段只解决了行尾孤儿，
-           * 实测 390 下会变成行首孤儿（「· 视频生成 6」），StatusBar 早就用的是隐去这一招。
-           * 计数紧跟标签（不用 ml-auto 推到右缘）：chip 被拉伸时计数离下一个标签比离自己的标签还近，
-           * 按邻近性会读成归了下一格。
-           */
-          <span key={g.kind} className="inline-flex items-center gap-1.5" title={dict.kind.hint[g.kind]}>
-            {i > 0 && (
-              <span aria-hidden className="hidden text-line-strong sm:inline">
-                ·
-              </span>
-            )}
-            <span className="text-fg">{dict.kind.label[g.kind]}</span>
-            <span className="tnum text-xs text-fg-dim">{g.count}</span>
-            {/* title 挂在不聚焦的元素上，键盘与触屏都拿不到；同一句话放进 sr-only，零像素成本 */}
-            <span className="sr-only">{dict.kind.hint[g.kind]}</span>
-          </span>
+      {/*
+        两列 / 三列栅格而不是一行 flex-wrap：六个类目各占一格，
+        代表型号才有地方排成一行而不被挤成一团。390 下每格独占一行，读起来是六条定义。
+      */}
+      <dl className="mt-3 grid gap-x-6 gap-y-2.5 sm:grid-cols-2 lg:grid-cols-3">
+        {groups.map((g) => (
+          <div key={g.kind} className="min-w-0">
+            <dt className="flex items-baseline gap-1.5" title={dict.kind.hint[g.kind]}>
+              <span className="text-fg">{dict.kind.label[g.kind]}</span>
+              <span className="tnum text-xs text-fg-dim">{g.count}</span>
+              {/* title 挂在不可聚焦的 dt 上，键盘与触屏都拿不到 → 同一句话放进 sr-only */}
+              <span className="sr-only">{dict.kind.hint[g.kind]}</span>
+            </dt>
+            <dd className="mt-1 flex min-w-0 items-center gap-x-1.5 text-2xs">
+              {g.representatives.map((m, i) => (
+                <Fragment key={m.id}>
+                  {/* 「·」绑在后一段前面，折行时行尾不会留下孤零零的分隔符 */}
+                  {i > 0 && (
+                    <span aria-hidden className="shrink-0 text-line-strong">
+                      ·
+                    </span>
+                  )}
+                  <Link
+                    href={`/model/${m.slug}/`}
+                    /*
+                     * `title` 是必需的：390 下这三个名字一律被截断，
+                     * 而鼠标用户没有第二条路读到全名（链接本身能点进去，
+                     * 但「点到哪个才是我要的那个」这一步就靠它了）。
+                     */
+                    title={m.name}
+                    className="min-w-0 truncate text-fg-dim transition-colors duration-120 hover:text-fg hover:underline hover:underline-offset-4"
+                  >
+                    {m.name}
+                  </Link>
+                </Fragment>
+              ))}
+            </dd>
+          </div>
         ))}
-      </div>
+      </dl>
     </section>
   );
 }

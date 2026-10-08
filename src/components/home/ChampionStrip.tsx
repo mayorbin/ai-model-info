@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { Panel } from '@/components/ui/Panel';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { StatNumber } from '@/components/ui/StatNumber';
@@ -29,32 +30,41 @@ export function ChampionStrip({ champions }: { champions: Champion[] }) {
         {champions.map((c) => {
           const vendorName = c.vendor?.nameZh ?? c.model.vendorId;
           return (
-            <Panel key={c.key} className="flex flex-col gap-1.5 p-3">
-              {/*
-                标签提到 12px --fg-muted。此前它是卡内最小最暗的元素（11px --fg-dim），
-                而它解释的 26px 数字最亮——阅读顺序被倒过来了：先读到「167」，
-                再找它是什么；现在标签先够得着。
-              */}
-              <span className="text-xs text-fg-muted">{dict.champions[c.key]}</span>
-              <span className="text-pretty text-sm font-semibold leading-snug text-fg">
-                {c.model.name}
-              </span>
-              <span className="flex min-w-0 items-center gap-1.5">
-                <VendorLogo
-                  vendorId={c.model.vendorId}
-                  name={vendorName}
-                  brandColor={c.vendor?.accentColor}
-                  size={20}
-                />
-                <span className="truncate text-2xs text-fg-dim">{vendorName}</span>
-              </span>
-              <StatNumber value={c.figure} size="lg" />
-              {/*
-                text-pretty：窄屏下这两行会折，默认折法会把「第一」的「一」单独留在末行。
-                依据行是卡片里唯一成句的文字，留一个孤字看起来像排版坏了。
-              */}
-              <span className="text-pretty text-2xs leading-snug text-fg-muted">{c.detail}</span>
-            </Panel>
+            /*
+             * 八格现在是八条路。冠军条答「谁第一」，而读者紧接着要问的一定是
+             * 「凭什么」——详情页答的正是这个（全部成绩 + 逐字段出处）。
+             * 此前这八张卡是纯容器，点不动；现在它们是这一页最该点得动的地方。
+             */
+            <Link key={c.key} href={`/model/${c.model.slug}/`} className="group flex min-w-0 flex-col">
+              <Panel className="flex h-full flex-col gap-1.5 p-3 transition-colors duration-120 group-hover:border-line-strong">
+                {/*
+                  标签提到 12px --fg-muted。此前它是卡内最小最暗的元素（11px --fg-dim），
+                  而它解释的 26px 数字最亮——阅读顺序被倒过来了：先读到「167」，
+                  再找它是什么；现在标签先够得着。
+                */}
+                <span className="text-xs text-fg-muted">{dict.champions[c.key]}</span>
+                <span className="text-pretty text-sm font-semibold leading-snug text-fg">
+                  {c.model.name}
+                </span>
+                <span className="flex min-w-0 items-center gap-1.5">
+                  <VendorLogo
+                    vendorId={c.model.vendorId}
+                    name={vendorName}
+                    brandColor={c.vendor?.accentColor}
+                    size={20}
+                  />
+                  <span className="truncate text-2xs text-fg-dim">{vendorName}</span>
+                </span>
+                <StatNumber value={c.figure} size="lg" />
+                {/*
+                  text-pretty：窄屏下这两行会折，默认折法会把「第一」的「一」单独留在末行。
+                  依据行是卡片里唯一成句的文字，留一个孤字看起来像排版坏了。
+                */}
+                <span className="text-pretty text-2xs leading-snug text-fg-muted">
+                  {c.detail}
+                </span>
+              </Panel>
+            </Link>
           );
         })}
       </div>

@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { DEFAULT_LANG, getDict } from '@/lib/i18n';
 import type { Leaderboard, LeaderboardRow } from '@/lib/leaderboard';
@@ -18,8 +19,9 @@ const VISIBLE = 20;
  *
  * 1. **构建期算好，零客户端运行时**（`next.config.ts` 是 `output: 'export'`）。
  *    名次直接取自 `derive.ts` 的 `rankByEci`，这里不写第二个排序器。
- * 2. **行不可点，所以不长成可点的样子。** 详情路由不在交付范围内，
- *    那就既不做链接、也不给悬停——不做「形状先于能力」的第四次。
+ * 2. **行现在是链接**（详情路由已落地）。这条曾经写的是「行不可点，所以不长成可点的
+ *    样子」——那条规则当时是对的，因为确实没有下一页可去；现在有了，于是形状跟着能力一起长。
+ *    这也让这一页第一次有了**横向**的路，而不只是纵向滚动。
  * 3. **214 行全渲染会把 390px 的页面再加高约 45%**，所以只展开前 20 名，
  *    其余收进原生 `<details>`。渐进披露用的是原生元素：静态导出下可用、
  *    键盘可聚焦、读屏语义正确，不需要一行脚本。
@@ -99,32 +101,49 @@ function RankGrid({ rows }: { rows: LeaderboardRow[] }) {
  */
 function RankRow({ row }: { row: LeaderboardRow }) {
   return (
-    <li className="flex items-baseline gap-2">
-      <span className="tnum w-7 shrink-0 text-right text-2xs text-fg-dim">{row.rank}</span>
-      <span
-        className="min-w-0 flex-1 truncate text-xs text-fg"
-        /* 1440 下实测有 5 个长名（如 Qwen3 235B-A22B Instruct 2507）会被截断。
-           行不可点，所以鼠标用户没有第二条路读到全名——title 是这一页既有的冗余入口做法。
-           读屏不受影响：文本在 DOM 里是完整的。 */
-        title={row.model.name}
-      >
-        {row.model.name}
-      </span>
-      {/* 窄屏收到 max-w-16，长厂商名会被截断，所以同样给 title */}
-      <span
-        className="max-w-16 shrink-0 truncate text-2xs text-fg-muted sm:max-w-24"
-        title={row.vendor?.nameZh ?? row.model.vendorId}
-      >
-        {row.vendor?.nameZh ?? row.model.vendorId}
-      </span>
+    <li>
       {/*
-        一位小数，**与 `rankByEci` 分组用的精度一致**。这两个精度必须一样：
-        早先是名次按原始浮点分组、这里按整数显示，结果六行都写着「157」却排在 15–20 号。
-        名次是这三列里唯一看不出对错的东西，读者只能靠旁边的数字验证它。
+        行现在是一张通往详情页的链接。此前它不是——当时的理由是「行不可点，
+        所以不长成可点的样子」，那条规则没错，错在这页当时确实没有下一页可去。
+        现在有了，于是**动作回来了**：这一区的位置就是「第 37 是谁」，
+        而读者接着要问的一定是「它凭什么排 37」。
       */}
-      <span className="tnum w-11 shrink-0 text-right text-xs text-fg-muted">
-        {row.eci.toFixed(1)}
-      </span>
+      {/*
+        `py-0.5` 把命中区从 20.19px 抬到 24.19px，过 WCAG 2.5.8 的 24×24。
+        原本只差 0.19px 就能靠「间距例外」蒙过去（行距 20.19 + 4 = 24.19），
+        但 0.19px 不是余量，改一次 `gap-y` 就会静默跌回不达标。
+        代价是每一行高 4px：展开前多 80px，全部 214 行展开时多约 776px。
+      */}
+      <Link
+        href={`/model/${row.model.slug}/`}
+        className="group flex items-baseline gap-2 py-0.5 transition-colors duration-120"
+      >
+        <span className="tnum w-7 shrink-0 text-right text-2xs text-fg-dim">{row.rank}</span>
+        <span
+          className="min-w-0 flex-1 truncate text-xs text-fg group-hover:underline group-hover:underline-offset-4"
+          /* 1440 下实测有 5 个长名（如 Qwen3 235B-A22B Instruct 2507）会被截断。
+             鼠标用户可以直接点进去读全名，title 留作同行内的冗余入口。
+             读屏不受影响：文本在 DOM 里是完整的。 */
+          title={row.model.name}
+        >
+          {row.model.name}
+        </span>
+        {/* 窄屏收到 max-w-16，长厂商名会被截断，所以同样给 title */}
+        <span
+          className="max-w-16 shrink-0 truncate text-2xs text-fg-muted sm:max-w-24"
+          title={row.vendor?.nameZh ?? row.model.vendorId}
+        >
+          {row.vendor?.nameZh ?? row.model.vendorId}
+        </span>
+        {/*
+          一位小数，**与 `rankByEci` 分组用的精度一致**。这两个精度必须一样：
+          早先是名次按原始浮点分组、这里按整数显示，结果六行都写着「157」却排在 15–20 号。
+          名次是这三列里唯一看不出对错的东西，读者只能靠旁边的数字验证它。
+        */}
+        <span className="tnum w-11 shrink-0 text-right text-xs text-fg-muted">
+          {row.eci.toFixed(1)}
+        </span>
+      </Link>
     </li>
   );
 }

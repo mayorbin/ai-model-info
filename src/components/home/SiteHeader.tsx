@@ -33,15 +33,17 @@ export function SiteHeader() {
           {dict.siteName}
         </h1>
 
-        {/* 搜索在本次变更范围外，这里只占位，不做成假输入框骗取点击 */}
-        <span
-          className="hidden h-7 max-w-[220px] flex-1 items-center rounded-sm border border-line bg-inset px-2.5 text-2xs text-fg-dim md:flex"
-          title="搜索尚未接入（不在本次变更范围内）"
-        >
-          搜索模型 / 厂商 / 能力
-        </span>
+        {/*
+          这里此前有个「搜索」占位：一个带边框、圆角、bg-inset、固定高度的 span。
+          注释写着「不做成假输入框骗取点击」，但它的形状就是输入框——而它挂在
+          不可聚焦的元素上，那个解释用的 title 在键盘和触屏上都拿不到。
+          读者按键、点击、什么都不发生，于是把这一页读成坏了而不是静态的。
+          搜索真的接进来之前，它就该待在这里（见本次 critique 的可操作性一条）。
 
-        <nav className="ml-auto flex shrink-0 items-center gap-5" aria-label="主导航">
+          导航链接用 min-h-11 + 横向内边距把命中区抬到 44px 见方（实测此前是 26×27）。
+          下划线移到内层 span 上，位置与改前一致。
+        */}
+        <nav className="ml-auto flex shrink-0 items-center gap-3" aria-label="主导航">
           {NAV.map((item) => {
             const label = dict.nav[item.key];
             if (item.ready) {
@@ -52,18 +54,25 @@ export function SiteHeader() {
                   href={item.href}
                   aria-current={current ? 'page' : undefined}
                   className={cx(
-                    'border-b-2 pb-1 text-sm transition-colors duration-120',
-                    current ? 'border-accent text-fg' : 'border-transparent text-fg-muted hover:text-fg',
+                    'flex min-h-11 shrink-0 items-center px-2.5 text-sm transition-colors duration-120',
+                    current ? 'text-fg' : 'text-fg-muted hover:text-fg',
                   )}
                 >
-                  {label}
+                  <span
+                    className={cx(
+                      'border-b-2 pb-1',
+                      current ? 'border-accent' : 'border-transparent',
+                    )}
+                  >
+                    {label}
+                  </span>
                 </Link>
               );
             }
             return (
               <span
                 key={item.key}
-                className="text-sm text-fg-faint"
+                className="shrink-0 px-2.5 text-sm text-fg-faint"
                 title="该页面不在本次变更范围内"
                 aria-disabled
               >

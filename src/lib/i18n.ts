@@ -132,6 +132,15 @@ export interface Dict {
       main: string;
       unscored: string;
     };
+    /**
+     * 档位名旁边**常显**的一句话注解，tierHint 的压缩版。
+     * 档位是这一页的骨架，而它凭什么这么分原先只有鼠标用户知道（挂在 title 上）。
+     */
+    tierShort: {
+      top: string;
+      main: string;
+      unscored: string;
+    };
     tierHint: {
       top: string;
       main: string;
@@ -142,6 +151,14 @@ export interface Dict {
     /** 上面那条提示用的短徽章 */
     newerBadge: string;
     newerHint: (name: string, date: string) => string;
+  };
+
+  /** 首屏的页内分区跳转。这一页在 390px 下有一万多像素，没有它就没有第二条路 */
+  sectionNav: {
+    /** 跳转行的可见前缀 */
+    label: string;
+    /** nav 的无障碍名 */
+    ariaLabel: string;
   };
 
   /** 首屏「今日格局」冠军横条 */
@@ -155,6 +172,18 @@ export interface Dict {
     newest: string;
     east: string;
     open: string;
+  };
+
+  /** 页脚之前的「综合智力排行」。补的是「可上下扫的完整次序」这个缺口 */
+  leaderboard: {
+    title: string;
+    count: (n: number) => string;
+    /** 排序轴说明。正文里第一次给出 ECI 的全称 */
+    note: string;
+    /** sr-only：多列栅格在线性读屏里说不清列的含义 */
+    columns: string;
+    expand: (n: number) => string;
+    collapse: string;
   };
 
   /** 顶栏状态行 */
@@ -171,6 +200,8 @@ export interface Dict {
     author: string;
     sourceCode: string;
     sourceCodeHint: string;
+    /** 页脚的回顶链接。390px 下这一页有一万多像素，走到页脚时它就是用得上的时候 */
+    backToTop: string;
   };
 }
 
@@ -288,6 +319,11 @@ const zh: Dict = {
       main: '主力',
       unscored: '尚无评测',
     },
+    tierShort: {
+      top: '厂商实力前十',
+      main: '参加过第三方评测',
+      unscored: '没有第三方成绩',
+    },
     tierHint: {
       top: '实力排名前十的厂商，按各家头号模型的综合智力算',
       main: '参加过第三方综合评测的厂商',
@@ -295,10 +331,21 @@ const zh: Dict = {
     },
     newer: (name) => `本家更新：${name}`,
     newerBadge: '本家更新',
+    /*
+     * 这条提示的定位是「不动选拔结果，只说出事实」（见 roster.ts 的 newerThanFlagship）。
+     * 它曾以「点这行可以直接去看它。」结尾——而它挂在 `VendorSection` 一个没有链接的 `<p>` 上，
+     * 详情路由也不在交付范围内，于是那句话承诺了一个永远不会发生的动作。
+     * **事实可以写在 title 里，动作不行**：要么有链接，要么别这么说。
+     */
     newerHint: (name, date) =>
       `${name} 发布于 ${date}，比当前展示的这位更新。\n` +
       '这里展示的是这家当下实力第一的型号，而新型号往往还没拿到第三方评测成绩，\n' +
-      '所以不会仅因为「更新」就替换。点这行可以直接去看它。',
+      '所以不会仅因为「更新」就替换。',
+  },
+
+  sectionNav: {
+    label: '跳到',
+    ariaLabel: '页内分区跳转',
   },
 
   champions: {
@@ -313,6 +360,15 @@ const zh: Dict = {
     open: '开源第一',
   },
 
+  leaderboard: {
+    title: '综合智力排行',
+    count: (n) => `${n} 个有成绩的模型`,
+    note: '按 ECI（Epoch AI 的 Epoch Capabilities Index）从高到低；分数相同的模型并列同名次。',
+    columns: '每行依次是：名次、型号、厂商、综合智力指数。',
+    expand: (n) => `展开其余 ${n} 个`,
+    collapse: '收起',
+  },
+
   hud: {
     updatedAt: (date) => `数据更新于 ${date}`,
     modelCount: (models, vendors) => `${models} 个模型 · ${vendors} 家厂商`,
@@ -325,6 +381,7 @@ const zh: Dict = {
     author: '作者',
     sourceCode: '源码开源',
     sourceCodeHint: '本站代码与数据管线全部开源（MIT）',
+    backToTop: '回到顶部',
   },
 };
 

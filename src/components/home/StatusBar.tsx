@@ -31,8 +31,12 @@ export function StatusBar({ snapshot }: { snapshot: WorldSnapshot }) {
     /*
      * 用 --fg-muted 而不是 --fg-dim：这是**页面级状态**（数据新旧、规模、源健康度），
      * 不是周边的说明文字。全站用量此前堆在两端、中间那档没人用，这是把它用起来的其中一处。
+     *
+     * 分隔符「·」绑在**后一段**上，并整段做成不可断开的 inline-flex：此前它们是三个
+     * 平级的 flex 项，390px 下折行时行尾会留下一颗孤零零的「·」（第一行以「65 家厂商 ·」结尾），
+     * 读起来像被截断了。窄屏再直接把分隔符隐去，只留间距——那里本来就没有富余。
      */
-    <div className="page-shell flex flex-wrap items-center gap-x-2.5 gap-y-1 py-2 text-2xs text-fg-muted">
+    <div className="page-shell flex flex-wrap items-center gap-x-3 gap-y-1 py-2 text-2xs text-fg-muted sm:gap-x-2.5">
       <span className="inline-flex items-center gap-1.5">
         {/*
           没有辉光。此前这里挂了 `box-shadow: 0 0 6px`，是这套明令禁止渐变光晕的
@@ -42,14 +46,18 @@ export function StatusBar({ snapshot }: { snapshot: WorldSnapshot }) {
         <span aria-hidden className="h-2 w-2 shrink-0 rounded-full" style={{ background: tone }} />
         <span className="tnum">{dict.hud.updatedAt(snapshot.generatedAt.slice(0, 10))}</span>
       </span>
-      <span aria-hidden className="text-line-strong">
-        ·
+      <span className="inline-flex items-center gap-x-2.5">
+        <span aria-hidden className="hidden text-line-strong sm:inline">
+          ·
+        </span>
+        <span className="tnum">{dict.hud.modelCount(alive, snapshot.vendors.length)}</span>
       </span>
-      <span className="tnum">{dict.hud.modelCount(alive, snapshot.vendors.length)}</span>
-      <span aria-hidden className="text-line-strong">
-        ·
+      <span className="inline-flex items-center gap-x-2.5">
+        <span aria-hidden className="hidden text-line-strong sm:inline">
+          ·
+        </span>
+        <span className="tnum">{dict.hud.sources(ok, sources.length)}</span>
       </span>
-      <span className="tnum">{dict.hud.sources(ok, sources.length)}</span>
     </div>
   );
 }

@@ -36,7 +36,9 @@ export function ChampionStrip({ champions }: { champions: Champion[] }) {
                 再找它是什么；现在标签先够得着。
               */}
               <span className="text-xs text-fg-muted">{dict.champions[c.key]}</span>
-              <span className="text-sm font-semibold leading-snug text-fg">{c.model.name}</span>
+              <span className="text-pretty text-sm font-semibold leading-snug text-fg">
+                {c.model.name}
+              </span>
               <span className="flex min-w-0 items-center gap-1.5">
                 <VendorLogo
                   vendorId={c.model.vendorId}
@@ -47,7 +49,11 @@ export function ChampionStrip({ champions }: { champions: Champion[] }) {
                 <span className="truncate text-2xs text-fg-dim">{vendorName}</span>
               </span>
               <StatNumber value={c.figure} size="lg" />
-              <span className="text-2xs leading-snug text-fg-muted">{c.detail}</span>
+              {/*
+                text-pretty：窄屏下这两行会折，默认折法会把「第一」的「一」单独留在末行。
+                依据行是卡片里唯一成句的文字，留一个孤字看起来像排版坏了。
+              */}
+              <span className="text-pretty text-2xs leading-snug text-fg-muted">{c.detail}</span>
             </Panel>
           );
         })}

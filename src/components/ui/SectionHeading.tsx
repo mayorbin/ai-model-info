@@ -40,7 +40,11 @@ export function SectionHeading({
           style={{ background: accentColor }}
         />
       )}
-      <h2 id={id} className="text-lg font-semibold text-fg">
+      {/*
+        scroll-mt-20：这一页有 56px 的吸顶导航，而标题是页内跳转的落点。
+        没有它，跳过去之后标题正好被导航盖住——读者会以为跳错了地方。
+      */}
+      <h2 id={id} className="scroll-mt-20 text-lg font-semibold text-fg">
         {title}
       </h2>
       {count != null && <span className="tnum ml-auto text-xs text-fg-dim">{count}</span>}

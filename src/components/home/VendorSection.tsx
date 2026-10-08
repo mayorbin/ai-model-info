@@ -44,7 +44,8 @@ export function VendorSection({ roster, modelsByVendor, apt, now }: VendorSectio
   })).filter((g) => g.entries.length > 0);
 
   return (
-    <section id={`region-${roster.continent}`}>
+    /* scroll-mt-20：页内跳转的落点要躲开 56px 的吸顶导航 */
+    <section id={`region-${roster.continent}`} className="scroll-mt-20">
       <SectionHeading
         title={dict.continent[roster.continent]}
         count={dict.plaza.vendorCount(roster.entries.length)}
@@ -53,14 +54,23 @@ export function VendorSection({ roster, modelsByVendor, apt, now }: VendorSectio
 
       {tiers.map(({ tier, entries }) => (
         <div key={tier} className="mt-5">
+          {/*
+           * 档位这一行是整页的骨架，而它凭什么这么分以前只有鼠标用户知道。
+           * 现在档位名后面跟一句**常显**的压缩注解，完整的判定依据仍留在 title 里、
+           * 并复制一份 sr-only 给读屏——title 挂在不聚焦的 div 上，键盘与触屏都拿不到。
+           */}
           <div className="mb-3 flex items-center gap-2" title={dict.plaza.tierHint[tier]}>
             <span className="shrink-0 text-2xs font-medium text-fg-muted">
               {dict.plaza.tier[tier]}
+            </span>
+            <span className="shrink-0 text-2xs text-fg-dim">
+              {dict.plaza.tierShort[tier]}
             </span>
             <span aria-hidden className="h-px flex-1 bg-line" />
             <span className="tnum shrink-0 text-2xs text-fg-dim">
               {dict.plaza.vendorCount(entries.length)}
             </span>
+            <span className="sr-only">{dict.plaza.tierHint[tier]}</span>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -135,6 +145,14 @@ function VendorBlock({ entry, modelsByVendor, apt, now }: VendorBlockProps) {
             {dict.plaza.newerBadge}
           </Badge>
           <span className="min-w-0 truncate">{newer.name}</span>
+          {/*
+            这行是纯陈述、不可点，所以它凭什么出现必须读得到。
+            `title` 挂在不聚焦的 `<p>` 上，键盘与触屏都拿不到 → 同一句话放进 sr-only，
+            照 MetricBar 的既有做法（零像素成本）。
+          */}
+          <span className="sr-only">
+            {dict.plaza.newerHint(newer.name, newer.releaseDate ?? '')}
+          </span>
         </p>
       )}
     </article>

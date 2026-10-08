@@ -14,6 +14,7 @@
 
 import type { BenchmarkScore, ModelRecord } from './types';
 import { leagueOf } from '@/data/coding-leagues';
+import { rankByEci } from './derive';
 import { formatScoreByUnit } from './format';
 import { percentile } from './percentile';
 
@@ -71,7 +72,13 @@ export interface AptitudeRow {
 
 // ─── 分位工具 ─────────────────────────────────────────────────
 
-/** 名次，1 起。用于「世界#3」这类短标。 */
+/**
+ * 并列同名次的名次：数严格大于自己的有几个，再 +1（1, 2, 2, 4）。
+ *
+ * **智力那一条已经不用它了**——那里读 `derive.ts` 的 `rankByEci`，全站只有一个定义。
+ * 这里只服务编程：编程的分位池是「赛制 + 测量方」各一个，池子大小差别很大，
+ * 名次只在悬停文案里出现，用并列语义是对的。
+ */
 function rankOf(descSorted: number[], value: number): number {
   let n = 1;
   for (const v of descSorted) {
@@ -203,15 +210,25 @@ function fmtPrice(usd: number): string {
  * 每一条都在**自己的有效人群**里做分位：智力只跟有智力分的比，
  * 编程只跟同一赛制的比。所以悬停文案里必须写清「在多少个有成绩的模型里排第几」，
  * 否则「排前 10%」会被误读成「在全部 485 个模型里排前 10%」。
+ *
+ * **只看在役模型。** 这与 StatusBar 已经写明的原则一致（「已退役的模型不进任何一处展示」），
+ * 也是这里唯一一处曾经漏掉它的地方：此前它吃的是全量模型，于是悬停文案里的分母是
+ * **216**，而排行区与冠军依据行说的是 **214**——同一个数量两个数，相隔一次悬停。
+ * 现在 11 个池子全部建立在在役模型上，分母与排行区逐字一致（有 `check-consistency.ts` 的
+ * 第四条不变式守着）。
  */
 export function buildAptitudeScale(models: ModelRecord[]): AptitudeScale {
-  const eciAsc = models
+  const alive = models.filter((m) => !m.retiredAt);
+
+  const eciAsc = alive
     .map((m) => m.benchmarks.eci)
     .filter((v): v is number => v != null)
     .sort((a, b) => a - b);
-  const eciDesc = [...eciAsc].reverse();
 
-  const ctxAsc = models
+  /* 名次读 derive.ts 那一处定义，不再自己数一遍——两套算法会在并列时给出不同答案 */
+  const eciRanks = rankByEci(alive);
+
+  const ctxAsc = alive
     .map((m) => m.contextWindow)
     .filter((v): v is number => v != null && v > 0)
     .map((v) => Math.log10(v))
@@ -219,7 +236,7 @@ export function buildAptitudeScale(models: ModelRecord[]): AptitudeScale {
 
   // 只把输出文本的模型算进价格人群：语音转写、图像生成这类按分钟或按张计费的，
   // 折算成 per-token 会得到接近 0 的假值，混进来会让「最便宜」这个结论出错。
-  const priceAsc = models
+  const priceAsc = alive
     .filter((m) => m.modalities.output.includes('text'))
     .map((m) => m.pricing.outputPerMTok)
     .filter((v): v is number => v != null && v > 0)
@@ -228,7 +245,7 @@ export function buildAptitudeScale(models: ModelRecord[]): AptitudeScale {
 
   /** 「赛制 + 测量方」各占一个独立分位池，不可比的分数在结构上就不会相遇。 */
   const codingPools = new Map<string, number[]>();
-  for (const m of models) {
+  for (const m of alive) {
     for (const s of codingScoresOf(m)) {
       const key = poolKey(s);
       const pool = codingPools.get(key);
@@ -258,7 +275,7 @@ export function buildAptitudeScale(models: ModelRecord[]): AptitudeScale {
         };
       } else {
         const fill = percentile(eciAsc, eci);
-        const rank = rankOf(eciDesc, eci);
+        const rank = eciRanks.get(model.id)!;
         smart = {
           id: 'smart',
           fill,

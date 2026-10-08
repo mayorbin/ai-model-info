@@ -19,7 +19,7 @@ export function SiteFooter({ snapshot }: { snapshot: WorldSnapshot }) {
 
   return (
     <footer className="mt-14 border-t border-line">
-      <div className="page-shell flex flex-wrap items-baseline gap-x-3 gap-y-2 py-6 text-2xs text-fg-dim">
+      <div className="page-shell flex flex-wrap items-baseline gap-x-3 gap-y-2 pt-6 pb-3 text-2xs text-fg-dim">
         <span className="text-fg-muted">{dict.footer.dataFrom}</span>
         {/*
           basis-full：窄屏下让数据源清单独占一行。否则清单折成 4 行时，快照日期
@@ -34,6 +34,20 @@ export function SiteFooter({ snapshot }: { snapshot: WorldSnapshot }) {
           用 muted 而不是 dim：它是**状态**，不是标签。
         */}
         <span className="tnum text-fg-muted">快照 {snapshot.generatedAt.slice(0, 10)}</span>
+      </div>
+
+      {/*
+        回顶链接就放在页脚：390px 下走到这里意味着一万像素已经滚过去了，
+        **这正是用得上的时刻**。纯 <a href="#top">，不需要客户端脚本，
+        静态导出下也能成立。
+      */}
+      <div className="page-shell pb-6 text-2xs">
+        <a
+          href="#top"
+          className="inline-block py-1.5 text-fg-dim underline-offset-4 transition-colors duration-120 hover:text-fg hover:underline"
+        >
+          {dict.footer.backToTop}
+        </a>
       </div>
     </footer>
   );

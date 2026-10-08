@@ -126,8 +126,14 @@ function eciTieThreshold(models: ModelRecord[]): number {
  */
 const SUCCESSION_MIN_DAYS = 7;
 
-/** 声明了输出模态且不含文本的，是图像/语音专用模型，代表不了这家的对话水平。 */
-function couldBeFlagship(m: ModelRecord): boolean {
+/**
+ * 声明了输出模态且不含文本的，是图像/语音专用模型，代表不了这家的对话水平。
+ *
+ * 导出给 `champions.ts` 的「最新发布」共用：那个槽位原先只按发布日期取最新的正规厂商型号，
+ * 结果被 `Grok Imagine Video 1.5 Lite` 拿下——一个视频 Lite 版。**「谁最新」问的是
+ * 对话模型的代际，不是整张总表的最新一刻**，所以准入必须与首页门面一致。
+ */
+export function couldBeFlagship(m: ModelRecord): boolean {
   const out = m.modalities.output;
   return out.length === 0 || out.includes('text');
 }
@@ -145,8 +151,11 @@ const SERVICE_TIER_SUFFIXES = ['-fast', '-free', '-flex', '-priority', '-batch',
  * 实测踩坑：Kimi K3 Fast 比 Kimi K3 晚 11 天、贵 50%、没有分数，
  * 完全符合「新一代主力」的接班条件，结果首页上月之暗面的门面变成了一个计费档。
  * 剥掉后缀能撞上同厂另一个 id 的，不参与接班。
+ *
+ * 导出给 `champions.ts` 的「最新发布」共用：不加这道闸，那一格会颁给
+ * `DeepSeek V4.1 Flash Fast`——一个计费档，不是新型号。
  */
-function isServiceTierAlias(m: ModelRecord, pool: ModelRecord[]): boolean {
+export function isServiceTierAlias(m: ModelRecord, pool: ModelRecord[]): boolean {
   for (const suffix of SERVICE_TIER_SUFFIXES) {
     if (!m.id.endsWith(suffix) || m.id.length <= suffix.length) continue;
     const base = m.id.slice(0, -suffix.length);

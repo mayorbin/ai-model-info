@@ -16,6 +16,7 @@ import type { ModelRecord, Vendor } from './types';
 import { buildValueScore, daysSince, rankByEci } from './derive';
 import { formatCount } from './format';
 import { buildCodingConsensus } from './coding-consensus';
+import { couldBeFlagship, isServiceTierAlias } from './roster';
 
 /** 卡片上放不下「$0.10 / 百万 tokens」，用短写法 */
 function shortPrice(usd: number): string {
@@ -187,12 +188,24 @@ export function buildChampions(
     () => '上下文窗口，一次能读进去的字数',
   );
 
+  /*
+   * 「最新发布」问的是**对话模型的代际**，所以准入与首页门面同一套：
+   * `couldBeFlagship` 挡掉视频/图像/语音专用型号，`isServiceTierAlias` 挡掉 -fast 这类计费档。
+   * 两道都缺不得——实测没有它们时，这一格颁给了 `Grok Imagine Video 1.5 Lite`（视频 Lite），
+   * 补上第一道后变成 `DeepSeek V4.1 Flash Fast`（计费档），两道都在才是
+   * `GPT-6.1 Sol`。八格里有一格答非所问，读者会推论整条横幅都没有策展。
+   */
   push(
     'newest',
     pickBest(
       trusted.filter((m) => {
         const t = releaseTime(m);
-        return t != null && t <= now.getTime();
+        return (
+          t != null &&
+          t <= now.getTime() &&
+          couldBeFlagship(m) &&
+          !isServiceTierAlias(m, alive)
+        );
       }),
       releaseTime,
     ),

@@ -205,12 +205,40 @@ export function daysSince(iso: string | null, now: Date): number | null {
 // ─── 名次 ─────────────────────────────────────────────────────
 
 /**
- * 按综合智力分给模型排名。没有分数的模型排名为 null——
- * 它们在首页上照常出现，只是没有名次，卡片上写「未参赛」。
+ * 按综合智力分给模型排名。没有分数的模型不进这张表。
+ *
+ * **同分并列同名次，名次会跳过**（1, 2, 2, 4）。实测在役 214 个有成绩的模型里
+ * **39 个并列组覆盖 96 个模型（45%）**，最大一组 5 个。上游的 ECI 是按「一起测的那一批」给的，
+ * 同分说明上游并没有把它们分开——连续编号会凭空造出一个数据里不存在的先后。
+ *
+ * **名次用的精度必须与页面所示精度一致。** 界面上的 ECI 是一位小数
+ * （排行区与能力条的出处文案都是 `toFixed(1)`），所以这里也按一位小数分组。
+ * 曾经按原始浮点分组、界面按整数显示，结果是**六行都写着「157」却排在 15–20 号**——
+ * 看着像 bug，其实是同一个数量被两个精度各说了一遍。
+ * **读者能把名次和数字对上，是这一页唯一不能省的东西。**
+ *
+ * 这条规则是**全站唯一定义**：能力条的「世界#N」、冠军依据行的「全球 #N」、
+ * 排行区的行号，全部读这里。此前能力条另有一套「数严格大于自己的有几个」的算法，
+ * 两套算法在 **57 个模型（26.6%）** 上给出不同的名次——同一个模型两个名次，
+ * 是这一页最不该有的不一致。现在只有一套。
  */
 export function rankByEci(models: ModelRecord[]): Map<string, number> {
   const scored = models
     .filter((m) => m.benchmarks.eci != null)
     .sort((a, b) => b.benchmarks.eci! - a.benchmarks.eci! || a.id.localeCompare(b.id));
-  return new Map(scored.map((m, i) => [m.id, i + 1]));
+
+  const ranks = new Map<string, number>();
+  let prev: number | null = null;
+  let rank = 0;
+  scored.forEach((m, i) => {
+    // 舍入是单调的，所以同一个「所示值」的成员在按原值排序后必定连续
+    const shown = Math.round(m.benchmarks.eci! * 10) / 10;
+    if (prev === null || shown !== prev) {
+      rank = i + 1;
+      prev = shown;
+    }
+    ranks.set(m.id, rank);
+  });
+  return ranks;
 }
+

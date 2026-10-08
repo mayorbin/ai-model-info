@@ -1,7 +1,10 @@
+import { DEFAULT_LANG, getDict } from '@/lib/i18n';
 import { cx } from './cx';
 
 /** 格数。8 格是能在 240px 卡片宽度里同时装下标签、格子和数值的上限 */
 const CELLS = 8;
+
+const dict = getDict(DEFAULT_LANG);
 
 interface MetricBarProps {
   /**
@@ -43,7 +46,7 @@ export function MetricBar({ fill, label, literal, tone, title, className }: Metr
 
   const display = hasData
     ? `${filled}/${CELLS}${literal ? ` · ${literal}` : ''}`
-    : (literal ?? '—');
+    : (literal ?? dict.unknown.notMeasured);
 
   return (
     <div className={cx('flex items-center gap-2', className)} title={title}>

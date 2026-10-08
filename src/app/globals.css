@@ -124,6 +124,23 @@
     scroll-behavior: smooth;
   }
 
+  /*
+   * 减弱动态偏好必须把平滑滚动关掉。
+   *
+   * 这不是理论问题：这一页 390px 下有 11,596px，页内跳转里最长的一次
+   * （「综合智力排行」回到页首）实测要走 **10,648px**。前庭敏感用户
+   * 对长时间平滑滚动的不适是实打实的，而他们都把系统偏好设成了 reduce。
+   *
+   * **参考项目有这条守卫，本项目一直漏着**——它是唯一一条「对方做对而我们没做」的项。
+   * 只关 scroll-behavior，不连 120ms 的颜色过渡一起灭掉：那个时长不构成动态不适，
+   * 而全站禁掉过渡会让 hover 反馈彻底消失，那是拿可用性换姿态。
+   */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
   body {
     background: var(--color-base);
     color: var(--color-fg);

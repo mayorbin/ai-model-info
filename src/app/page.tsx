@@ -57,51 +57,58 @@ export default function Page() {
     else modelsByVendor.set(m.vendorId, [m]);
   }
 
+  /*
+   * 页头与页脚在 `<main>` **外面**。
+   *
+   * 嵌在 `<main>` 里的 `<header>` / `<footer>` 不再产生 `banner` / `contentinfo`
+   * 这两个地标——读屏用户因此失去「跳到页脚」这类快速跳转。此前两页都嵌着。
+   */
   return (
-    <main id="top" className="min-h-dvh">
+    <>
       <SiteHeader />
-      <StatusBar snapshot={snapshot} />
+      <main id="top" className="min-h-dvh">
+        <StatusBar snapshot={snapshot} />
 
-      {/*
-        页内跳转。390px 下这一页有一万多像素，而整页此前只有 1 个可聚焦元素——
-        读者往下走只能靠滚。这四个是真链接（分区 id 早就存在，只是没人指向它们），
-        所以它们长成控件的形状是理所应当的，与类型 chip 那种伪控件不是一回事。
-      */}
-      <nav
-        aria-label={dict.sectionNav.ariaLabel}
-        className="page-shell flex flex-wrap items-center gap-x-4 gap-y-1 pb-1 text-xs"
-      >
-        <span className="text-fg-dim">{dict.sectionNav.label}</span>
-        {SECTIONS.map((s) => (
-          <a
-            key={s.id}
-            href={`#${s.id}`}
-            /* py-1 把命中区从 19px 抬到 27px，过 WCAG 2.5.8 的 24×24 */
-            className="py-1 text-fg-muted underline-offset-4 transition-colors duration-120 hover:text-fg hover:underline"
-          >
-            {s.label}
-          </a>
-        ))}
-      </nav>
+        {/*
+          页内跳转。390px 下这一页有一万多像素，而整页此前只有 1 个可聚焦元素——
+          读者往下走只能靠滚。这四个是真链接（分区 id 早就存在，只是没人指向它们），
+          所以它们长成控件的形状是理所应当的，与类型 chip 那种伪控件不是一回事。
+        */}
+        <nav
+          aria-label={dict.sectionNav.ariaLabel}
+          className="page-shell flex flex-wrap items-center gap-x-4 gap-y-1 pb-1 text-xs"
+        >
+          <span className="text-fg-dim">{dict.sectionNav.label}</span>
+          {SECTIONS.map((s) => (
+            <a
+              key={s.id}
+              href={`#${s.id}`}
+              /* py-1 把命中区从 19px 抬到 27px，过 WCAG 2.5.8 的 24×24 */
+              className="py-1 text-fg-muted underline-offset-4 transition-colors duration-120 hover:text-fg hover:underline"
+            >
+              {s.label}
+            </a>
+          ))}
+        </nav>
 
-      <div className="page-shell flex flex-col gap-10 py-6">
-        <ChampionStrip champions={champions} />
-        <KindStrip groups={kinds} />
+        <div className="page-shell flex flex-col gap-10 py-6">
+          <ChampionStrip champions={champions} />
+          <KindStrip groups={kinds} />
 
-        {rosters.map((roster) => (
-          <VendorSection
-            key={roster.continent}
-            roster={roster}
-            modelsByVendor={modelsByVendor}
-            apt={apt}
-            now={now}
-          />
-        ))}
+          {rosters.map((roster) => (
+            <VendorSection
+              key={roster.continent}
+              roster={roster}
+              modelsByVendor={modelsByVendor}
+              apt={apt}
+              now={now}
+            />
+          ))}
 
-        <RankingList board={board} />
-      </div>
-
+          <RankingList board={board} />
+        </div>
+      </main>
       <SiteFooter snapshot={snapshot} />
-    </main>
+    </>
   );
 }

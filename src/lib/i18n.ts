@@ -20,6 +20,12 @@ export interface Dict {
     chronicle: string;
     leaderboard: string;
     compare: string;
+    /**
+     * 尚未实现的路由旁边那句解释。
+     * 上一版写的是「该页面不在本次变更范围内」——那是**发布流程的语言**，
+     * 读者不关心变更范围，他只想知道是不是自己点错了。改成说人话。
+     */
+    unbuilt: string;
   };
 
   continent: {
@@ -46,13 +52,16 @@ export interface Dict {
     maxOutput: string;
     inputPrice: string;
     outputPrice: string;
+    cachedInputPrice: string;
     params: string;
+    trainingCompute: string;
     license: string;
     openWeights: string;
     modalities: string;
     toolCall: string;
     reasoning: string;
     promptCaching: string;
+    structuredOutput: string;
     /** 模型类型（文本 / 视觉 / …），见 kind.ts */
     kind: string;
   };
@@ -108,6 +117,8 @@ export interface Dict {
     /** 有参数量但来自型号名推断而非官方权重文件时的提示 */
     sizeApprox: string;
     noData: string;
+    /** 能力条空槽里的短文案：没测过，不是零分 */
+    notMeasured: string;
     /** 只被多源发现收录、缺少价格与上下文的模型 */
     singleSource: string;
     /** 只精确到月的发布日期 */
@@ -203,6 +214,40 @@ export interface Dict {
     /** 页脚的回顶链接。390px 下这一页有一万多像素，走到页脚时它就是用得上的时候 */
     backToTop: string;
   };
+
+  /**
+   * 模型详情页。首页的每一个结论都必须有地方可追——
+   * 冠军卡、厂商卡、排行行全部指向这里，所以这一节文案是首页「可点」的兑现条件。
+   */
+  model: {
+    /** 返回总览 */
+    back: string;
+    section: {
+      /** 能力与读数 */
+      metrics: string;
+      /** 全部评测成绩 */
+      scores: string;
+      /** 数据出处 */
+      provenance: string;
+      /** 同厂其他型号 */
+      siblings: string;
+    };
+    /** 头部名次行。分母与排行区同源（rankByEci 的池子大小） */
+    rank: (rank: number, total: number) => string;
+    /** 没有第三方综合成绩时的头部说明 */
+    unranked: string;
+    /** 已退役提示 */
+    retired: string;
+    /** 成绩表计数 */
+    scoreCount: (n: number) => string;
+    /** 一条成绩都没有 */
+    noScores: string;
+    provenanceNote: string;
+    /** 数据出处那一区的计数，如「23 个字段」 */
+    fieldCount: (n: number) => string;
+    siblingCount: (n: number) => string;
+    noSiblings: string;
+  };
 }
 
 /*
@@ -225,6 +270,7 @@ const zh: Dict = {
     chronicle: '时间线',
     leaderboard: '排行榜',
     compare: '对比',
+    unbuilt: '这个页面还没有做',
   },
 
   continent: {
@@ -249,13 +295,16 @@ const zh: Dict = {
     maxOutput: '单次最大输出',
     inputPrice: '输入价格',
     outputPrice: '输出价格',
+    cachedInputPrice: '缓存输入价格',
     params: '参数量',
+    trainingCompute: '训练算力',
     license: '开源许可',
     openWeights: '开放权重',
     modalities: '支持的输入',
     toolCall: '工具调用',
     reasoning: '深度思考',
     promptCaching: '提示缓存',
+    structuredOutput: '结构化输出',
     kind: '模型类型',
   },
 
@@ -302,6 +351,13 @@ const zh: Dict = {
     sizeEstimated: '规模为估算值，官方从未公布参数量',
     sizeApprox: '参数量由型号名推断，非官方权重实测',
     noData: '暂无数据',
+    /*
+     * 能力条空槽里的那句短文案。它此前是一个「—」——一个破折号既可能是「没测过」
+     * 也可能是「得了零分」，而这一页最贵的一条区分恰恰就是这两个。
+     * 参考项目在同一个位置写「暂无」但只有 2.71:1 的对比度；这里取「未测」，
+     * 两个字、放得下 8 格条的右端，且与 `fill: 0`（真的零分）在字面上就分得开。
+     */
+    notMeasured: '未测',
     singleSource: '单源数据，未经交叉校验',
     monthOnly: (year, month) => `${year} 年 ${month} 月`,
   },
@@ -382,6 +438,27 @@ const zh: Dict = {
     sourceCode: '源码开源',
     sourceCodeHint: '本站代码与数据管线全部开源（MIT）',
     backToTop: '回到顶部',
+  },
+
+  model: {
+    back: '返回总览',
+    section: {
+      metrics: '能力与读数',
+      scores: '全部评测成绩',
+      provenance: '数据出处',
+      siblings: '同厂其他型号',
+    },
+    rank: (rank, total) => `在 ${total} 个有第三方综合成绩的模型里排第 ${rank}`,
+    unranked: '没有第三方综合智力成绩。没测过不等于不聪明。',
+    retired: '已退役。已退役的模型不参与首页的任何一处展示与名次。',
+    scoreCount: (n) => `${n} 条成绩`,
+    noScores:
+      '公开渠道没有查到任何评测成绩。这不代表它不会写代码或者不聪明，只代表没有第三方测过它。',
+    provenanceNote:
+      '逐字段记录这条数据是从哪里读到的。同一个模型的不同字段来自不同上游时，以本表为准。',
+    fieldCount: (n) => `${n} 个字段`,
+    siblingCount: (n) => `${n} 个型号`,
+    noSiblings: '这家厂商在本快照里只有这一个型号。',
   },
 };
 

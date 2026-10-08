@@ -1,18 +1,14 @@
-import { Badge, type BadgeTone } from '@/components/ui/Badge';
+import { Badge } from '@/components/ui/Badge';
 import { MetricBar } from '@/components/ui/MetricBar';
 import { Panel } from '@/components/ui/Panel';
 import { VendorLogo } from '@/components/ui/VendorLogo';
+import { statusBadge } from '@/components/ui/statusBadge';
 import { APTITUDES, type AptitudeRow } from '@/lib/aptitude';
-import { daysSince } from '@/lib/derive';
 import { formatDate } from '@/lib/format';
 import { DEFAULT_LANG, getDict } from '@/lib/i18n';
-import { hasCoreData } from '@/lib/roster';
 import type { ModelRecord, Vendor } from '@/lib/types';
 
 const dict = getDict(DEFAULT_LANG);
-
-/** 「新发布」的判定窗口。只是徽章阈值，与 roster.ts 的选拔规则无关。 */
-const FRESH_DAYS = 30;
 
 interface ModelCardProps {
   model: ModelRecord;
@@ -97,18 +93,4 @@ export function ModelCard({ model, vendor, apt, now }: ModelCardProps) {
       </div>
     </Panel>
   );
-}
-
-/**
- * 卡片右上角的状态徽章。**最多一个**——挂满徽章等于一个都没挂，
- * 这是原项目用实测数据确认过的（原项目里 74% 的屋子挂同一个图标，于是它传递零比特）。
- * 优先级：已退役 > 新发布 > 资料不全 > 未参评。
- */
-function statusBadge(model: ModelRecord, now: Date): { tone: BadgeTone; label: string } | null {
-  if (model.retiredAt) return { tone: 'neg', label: dict.badge.retired };
-  const age = daysSince(model.releaseDate, now);
-  if (age != null && age >= 0 && age <= FRESH_DAYS) return { tone: 'pos', label: dict.badge.fresh };
-  if (!hasCoreData(model)) return { tone: 'accent', label: dict.badge.partialData };
-  if (model.benchmarks.eci == null) return { tone: 'neutral', label: dict.badge.unranked };
-  return null;
 }

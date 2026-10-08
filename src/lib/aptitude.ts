@@ -275,13 +275,25 @@ export function buildAptitudeScale(models: ModelRecord[]): AptitudeScale {
         };
       } else {
         const fill = percentile(eciAsc, eci);
-        const rank = eciRanks.get(model.id)!;
+        /*
+         * 名次表只建在在役模型上（与排行区、冠军依据行同一个池子），
+         * 所以**已退役的模型查不到名次**——`eciRanks.get()` 会给出 undefined。
+         *
+         * 首页永远不会走到这一支（它只渲染在役模型），但详情页会：18 个已退役模型里
+         * 有 2 个带 ECI，此前那句断言会把它们渲染成「世界#undefined」。
+         * 现在没有名次就不报名次，改为如实说明它为什么不参与名次——
+         * **缺一个数就说缺这个数，而不是拿一个假值顶上。**
+         */
+        const rank = eciRanks.get(model.id);
         smart = {
           id: 'smart',
           fill,
-          literal: `世界#${rank}`,
+          literal: rank == null ? null : `世界#${rank}`,
           verdict: verdictOf(fill, VERDICTS),
-          title: `综合智力指数 ${eci.toFixed(1)}，在 ${eciAsc.length} 个有成绩的模型里排第 ${rank}。\n来源：Epoch AI Capabilities Index。`,
+          title:
+            rank == null
+              ? `综合智力指数 ${eci.toFixed(1)}。该模型已退役，不参与当前名次。\n来源：Epoch AI Capabilities Index。`
+              : `综合智力指数 ${eci.toFixed(1)}，在 ${eciAsc.length} 个有成绩的模型里排第 ${rank}。\n来源：Epoch AI Capabilities Index。`,
         };
       }
 

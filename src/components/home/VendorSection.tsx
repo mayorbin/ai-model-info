@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/Badge';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { VendorLogo } from '@/components/ui/VendorLogo';
 import { ModelCard } from './ModelCard';
+import { VendorRow } from './VendorRow';
 import type { AptitudeScale } from '@/lib/aptitude';
 import { DEFAULT_LANG, getDict } from '@/lib/i18n';
 import {
@@ -74,17 +75,33 @@ export function VendorSection({ roster, modelsByVendor, apt, now }: VendorSectio
             <span className="sr-only">{dict.plaza.tierHint[tier]}</span>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {entries.map((entry) => (
-              <VendorBlock
-                key={entry.vendor.id}
-                entry={entry}
-                modelsByVendor={modelsByVendor}
-                apt={apt}
-                now={now}
-              />
-            ))}
-          </div>
+          {/*
+           * **档位决定密度，这是这一页唯一的分层手段。**
+           *
+           * 「尚无评测」档换成行列表：这一档的四条能力条全是空槽（实测整页 160 条量表行
+           * 有 59 条如此，其中多数落在这里），给它 209px 的卡片等于用同样的版面说「什么都没有」。
+           * 换成行之后这一档短了约三分之二，而且档位边界第一次在版面上真的看得出来——
+           * 这正是档位这条路牌本来要干的事，此前它只由一行 11px 的标题承担。
+           */}
+          {tier === 'unscored' ? (
+            <ul className="grid gap-x-6 sm:grid-cols-2 lg:grid-cols-3">
+              {entries.map((entry) => (
+                <VendorRow key={entry.vendor.id} model={entry.model} vendor={entry.vendor} />
+              ))}
+            </ul>
+          ) : (
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {entries.map((entry) => (
+                <VendorBlock
+                  key={entry.vendor.id}
+                  entry={entry}
+                  modelsByVendor={modelsByVendor}
+                  apt={apt}
+                  now={now}
+                />
+              ))}
+            </div>
+          )}
         </div>
       ))}
 

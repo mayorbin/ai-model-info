@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { cx } from '@/components/ui/cx';
 import { DEFAULT_LANG, getDict } from '@/lib/i18n';
+import { GlobalSearch } from './GlobalSearch';
 
 const dict = getDict(DEFAULT_LANG);
 
@@ -39,34 +40,14 @@ export function SiteHeader({ current = '/' }: { current?: string | null }) {
 
   return (
     <header className="sticky top-0 z-20 border-b border-line bg-base/95 backdrop-blur">
-      <div className="page-shell flex h-14 items-center gap-4">
-        {/*
-          真 <h1>。首页此前一个 h1 都没有，文档大纲直接从 h2 开始，
-          读屏用户的标题导航会整层缺失。
+      <div className="page-shell flex h-14 items-center justify-between gap-2 sm:gap-4">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+          {siteNameIsH1 ? (
+            <h1 className="shrink-0 text-lg font-semibold text-fg sm:text-xl">{dict.siteName}</h1>
+          ) : (
+            <span className="shrink-0 text-lg font-semibold text-fg sm:text-xl">{dict.siteName}</span>
+          )}
 
-          **20px 而不是 16px。** 16px 是为了「不低于自己的 h2」而定的
-          （分区标题也是 16px/600），可那只解决了「不大于」，没解决「不大」——
-          实测那一版 h1 与每一个分区标题同号同重，站名成了全页最安静的三个字，
-          而它上面只有 26px 的冠军读数。20px 仍然低于冠军读数，不喧宾夺主，
-          但站名第一次有了站名的体量。
-        */}
-        {siteNameIsH1 ? (
-          <h1 className="shrink-0 text-xl font-semibold text-fg">{dict.siteName}</h1>
-        ) : (
-          <span className="shrink-0 text-xl font-semibold text-fg">{dict.siteName}</span>
-        )}
-
-        {/*
-          这里此前有个「搜索」占位：一个带边框、圆角、bg-inset、固定高度的 span。
-          注释写着「不做成假输入框骗取点击」，但它的形状就是输入框——而它挂在
-          不可聚焦的元素上，那个解释用的 title 在键盘和触屏上都拿不到。
-          读者按键、点击、什么都不发生，于是把这一页读成坏了而不是静态的。
-          搜索真的接进来之前，它就该待在这里。
-
-          导航链接用 min-h-11 + 横向内边距把命中区抬到 44px 见方（实测此前是 26×27）。
-          下划线移到内层 span 上，位置与改前一致。
-        */}
-        <div className="ml-auto flex shrink-0 items-center gap-3">
           <nav aria-label="主导航">
             {ready.map((item) => {
               const here = item.href === current;
@@ -76,7 +57,7 @@ export function SiteHeader({ current = '/' }: { current?: string | null }) {
                   href={item.href}
                   aria-current={here ? 'page' : undefined}
                   className={cx(
-                    'flex min-h-11 shrink-0 items-center px-2.5 text-sm transition-colors duration-120',
+                    'flex min-h-11 shrink-0 items-center px-1.5 text-xs transition-colors duration-120 sm:px-2.5 sm:text-sm',
                     here ? 'text-fg' : 'text-fg-muted hover:text-fg',
                   )}
                 >
@@ -87,31 +68,31 @@ export function SiteHeader({ current = '/' }: { current?: string | null }) {
               );
             })}
           </nav>
+        </div>
 
-          {unbuilt.map((item) => (
-            /*
-             * `--fg-dim`（6.41:1）而不是 `--fg-faint`（3.44:1）。
-             *
-             * 这一条是被 finish review 抓到的：它们此前挂 `--fg-faint`，依据是
-             * 「WCAG 对 disabled 控件有豁免」——可它们**已经从 `<nav>` 里出来了**，
-             * 现在是三个普通的文字标签，不是 inactive 的 UI 组件，豁免不再覆盖它们。
-             * 而它们确实承载信息（这三个页面计划要做）。
-             *
-             * 于是按这套系统自己的规矩办：`--fg-faint` 只表示 disabled、不承载信息文本，
-             * 而这三条是信息文本 → 走 `--fg-dim`。
-             * 「还没做」这件事改由 `title` + `sr-only` 那句话承担，
-             * 不再靠把字调暗来表达——**那正是「不把信息编码进颜色」的反面**。
-             */
-            <span
-              key={item.key}
-              className="shrink-0 px-2.5 text-sm text-fg-dim"
-              title={dict.nav.unbuilt}
-            >
-              {dict.nav[item.key]}
-              {/* title 挂在不聚焦的元素上，键盘与触屏都拿不到 → 同一句话放进 sr-only */}
-              <span className="sr-only">（{dict.nav.unbuilt}）</span>
-            </span>
-          ))}
+        <div className="flex min-w-0 flex-1 items-center justify-end gap-1.5 sm:gap-3">
+          <div className="w-full min-w-0 max-w-[170px] sm:max-w-xs">
+            <GlobalSearch />
+          </div>
+
+          {/*
+            这三条在**任何宽度都留在页面上**。此前它们被 `hidden md:flex` 从 390 下整条移除，
+            而它们承载的是「这三个页面还没做」这个事实，不是装饰——按本项目的规矩，
+            信息不进颜色，也不该进断点。窄屏省下的空间从内边距和缝隙里取：
+            `px-2→px-1`、`gap-1→gap-0.5`，12px 字号与 `--fg-dim` 不动。
+          */}
+          <div className="flex shrink-0 items-center gap-0.5 sm:gap-1">
+            {unbuilt.map((item) => (
+              <span
+                key={item.key}
+                className="shrink-0 px-1 text-xs text-fg-dim sm:px-2"
+                title={dict.nav.unbuilt}
+              >
+                {dict.nav[item.key]}
+                <span className="sr-only">（{dict.nav.unbuilt}）</span>
+              </span>
+            ))}
+          </div>
         </div>
       </div>
     </header>

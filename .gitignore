@@ -24,9 +24,11 @@ public/search-index.json
 
 # screenshot output
 docs/shots/
+docs/compare-shots/
 
 # os
 .DS_Store
 Thumbs.db
 
 .impeccable
+.codegraph

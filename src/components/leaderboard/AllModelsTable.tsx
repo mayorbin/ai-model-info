@@ -166,8 +166,13 @@ export function AllModelsTable({ data }: { data: AllTableData }) {
                       {m.retired && <span className="shrink-0 text-2xs text-fg-dim">{dict.badge.retired}</span>}
                     </Link>
                   </td>
-                  <td className="hidden truncate px-2 py-1.5 text-fg-muted md:table-cell">
-                    {v?.nameZh ?? m.vendor}
+                  <td className="hidden truncate px-2 py-1.5 md:table-cell">
+                    <Link
+                      href={`/vendor/${m.vendor}/`}
+                      className="text-fg-muted transition-colors duration-120 hover:text-fg hover:underline hover:underline-offset-4"
+                    >
+                      {v?.nameZh ?? m.vendor}
+                    </Link>
                   </td>
                   <td className="hidden px-2 py-1.5 whitespace-nowrap text-fg-muted md:table-cell">
                     {v?.continent === 'east' ? dict.continent.east : dict.continent.west}

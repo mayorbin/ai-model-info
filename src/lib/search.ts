@@ -322,7 +322,12 @@ export function runSearch(index: SearchIndex | null, raw: string): SearchResult 
   const vendorHits: { hit: VendorHit; score: number }[] = [];
   for (const v of index.vendors) {
     const s = vendorScore(v, q);
-    if (s > 0) vendorHits.push({ hit: { vendor: v, href: `#vendor-${v.i}` }, score: s });
+    /*
+     * 厂商结果的落点曾经是首页那个厂商块的锚点（`#vendor-<id>`）——那时厂商页还不存在，
+     * 锚点是当时唯一能去的地方。厂商页落地后就该直接去那一页：
+     * 它把这个厂商的全部型号、发布月份与数据出处都摊开了。
+     */
+    if (s > 0) vendorHits.push({ hit: { vendor: v, href: `/vendor/${v.i}/` }, score: s });
   }
   vendorHits.sort((a, b) => b.score - a.score || b.hit.vendor.t - a.hit.vendor.t);
 

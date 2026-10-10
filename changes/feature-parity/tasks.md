@@ -33,5 +33,5 @@
 
 ### 批次 4 · 收口与验证
 
-- [ ] **4.1 全站入口**：首页锚点导航/页脚补 4 个新页面入口；厂商卡片（首页 roster）链接到厂商详情页；排行榜行链接到模型/厂商页。证明：从首页可一次跳达全部 5 个新页面。
-- [ ] **4.2 统一验证**：`npm run verify` 四项全过；`npm run shots` 1440/390 含新页面截图自查；组件行数自查（`find src/components -name "*.tsx" -exec wc -l {} + | sort -rn | head -20` 无超 400，目标 250）；`changes/feature-parity/` 下补记验证结论。证明：上述命令输出全绿。
+- [x] **4.1 全站入口**：首页锚点导航/页脚补 4 个新页面入口；厂商卡片（首页 roster）链接到厂商详情页；排行榜行链接到模型/厂商页。证明：从首页可一次跳达全部 5 个新页面。
+- [x] **4.2 统一验证**：`npm run verify` 四项全过；`npm run shots` 1440/390 含新页面截图自查；组件行数自查（`find src/components -name "*.tsx" -exec wc -l {} + | sort -rn | head -20` 无超 400，目标 250）；`changes/feature-parity/` 下补记验证结论。证明：上述命令输出全绿。

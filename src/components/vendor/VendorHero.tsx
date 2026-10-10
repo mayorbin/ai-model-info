@@ -72,21 +72,27 @@ export function VendorHero({ vendor, family }: VendorHeroProps) {
       </p>
 
       {/*
-       * 类型构成是纯文字摘要，不是筛选条：总表路由还没有落地时，
-       * 给它 chip 的外形等于承诺一个不存在的动作（DESIGN.md 拒绝清单：
-       * 先有功能，再给它形状）。每类的判定依据挂 title + sr-only。
+       * 类型构成。它是这一页最先该被读到的一行：「这家有没有能看图的 / 能出图的」
+       * 不该靠读者一个个点开型号去数，更不该靠猜名字。
+       *
+       * 每一项**都是链接**，指向总表里筛好的那一屏（`?vendor=&kind=`）——
+       * 这批页面落地之前它们在参考项目里是 chip 外形却没有去处，本项目当时只敢做纯文字摘要；
+       * 现在去处存在了，它们才拿回链接的样子。链接身份由悬停态表达，不加边框。
        */}
       {kinds.length > 0 && (
         <p className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1 text-2xs text-fg-dim">
           <span className="shrink-0">{dict.vendor.kindSummaryLabel}</span>
           {kinds.map((k) => (
-            <span key={k} className="shrink-0">
-              <span title={dict.kind.hint[k]}>
-                {dict.kind.label[k]}
-                <span className="tnum ml-0.5">{counts[k]}</span>
-              </span>
+            <Link
+              key={k}
+              href={`/leaderboard/all/?vendor=${encodeURIComponent(vendor.id)}&kind=${k}`}
+              className="shrink-0 text-fg-muted underline-offset-4 transition-colors duration-120 hover:text-fg hover:underline"
+              title={dict.kind.hint[k]}
+            >
+              {dict.kind.label[k]}
+              <span className="tnum ml-0.5">{counts[k]}</span>
               <span className="sr-only">：{dict.kind.hint[k]}</span>
-            </span>
+            </Link>
           ))}
         </p>
       )}

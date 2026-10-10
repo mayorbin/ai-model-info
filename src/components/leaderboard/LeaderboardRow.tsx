@@ -67,7 +67,13 @@ export function LeaderboardRow({
         >
           {model.name}
         </Link>
-        <div className="truncate text-2xs leading-4 text-fg-dim">{vendor?.nameZh ?? model.vendor}</div>
+        {/* 厂商名也链到厂商页：从榜单直接看「这家还有什么」，不必先绕进型号页 */}
+        <Link
+          href={`/vendor/${model.vendor}/`}
+          className="block w-fit max-w-full truncate text-2xs leading-4 text-fg-dim transition-colors duration-120 hover:text-fg hover:underline hover:underline-offset-4"
+        >
+          {vendor?.nameZh ?? model.vendor}
+        </Link>
       </div>
       {/* 条形是纯几何的分位提示，数字在右侧；窄屏隐藏，读数仍然完整 */}
       <div aria-hidden className="hidden h-1.5 w-36 shrink-0 rounded-sm bg-inset md:block lg:w-44">

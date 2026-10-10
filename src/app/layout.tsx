@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   /* 必须与 globals.css 的 --color-void 一致。这个值要交给浏览器渲染地址栏，
      没法引用 CSS 变量，所以只能在这里重复一次——改配色时两处都要动。 */
-  themeColor: '#07080b',
+  themeColor: '#0b0d11',
   colorScheme: 'dark',
 };
 

@@ -9,7 +9,7 @@ import { EMPTY_FILTER, filterFromParams, filterToParams, makePredicate, type Fil
 import { ModelFilters } from './ModelFilters';
 import type { AllRow, AllTableData } from './types';
 import { FOCUS } from './ui';
-import { useUrlQuery } from './useUrlQuery';
+import { useUrlQuery } from '@/components/ui/useUrlQuery';
 
 const dict = getDict(DEFAULT_LANG);
 

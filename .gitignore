@@ -21,6 +21,7 @@ data/raw/
 
 # generated assets
 public/search-index.json
+public/compare-data.json
 
 # screenshot output
 docs/shots/

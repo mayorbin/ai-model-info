@@ -12,7 +12,7 @@ import type { CmpModel, CompareData } from './types';
 import { MetricBar } from '@/components/ui/MetricBar';
 import { APTITUDES } from '@/lib/aptitude';
 import { DEFAULT_LANG, getDict } from '@/lib/i18n';
-import { useUrlQuery } from '@/components/leaderboard/useUrlQuery';
+import { useUrlQuery } from '@/components/ui/useUrlQuery';
 
 const dict = getDict(DEFAULT_LANG);
 

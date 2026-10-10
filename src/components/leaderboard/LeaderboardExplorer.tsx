@@ -7,7 +7,7 @@ import { LeaderboardRow } from './LeaderboardRow';
 import { ModelFilters } from './ModelFilters';
 import type { ExplorerData, LeanTrack } from './types';
 import { FOCUS } from './ui';
-import { useUrlQuery } from './useUrlQuery';
+import { useUrlQuery } from '@/components/ui/useUrlQuery';
 
 const dict = getDict(DEFAULT_LANG);
 

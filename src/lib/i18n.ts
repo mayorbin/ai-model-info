@@ -248,6 +248,27 @@ export interface Dict {
     siblingCount: (n: number) => string;
     noSiblings: string;
   };
+
+  /** 厂商详情页。首页每家只露一个门面，这一页摊开它的全部型号与出处 */
+  vendor: {
+    /** 返回总览 */
+    back: string;
+    /** 头部计数，如「88 个模型」 */
+    modelCount: (n: number) => string;
+    retiredCount: (n: number) => string;
+    homepage: string;
+    /** 类型构成那一行的前缀。只是文字摘要，不是筛选（筛选在总表页） */
+    kindSummaryLabel: string;
+    timelineTitle: string;
+    timelineNote: string;
+    /** 每个月份桶标题旁的计数 */
+    releases: (n: number) => string;
+    /** unknown 桶的标题 */
+    unknownDate: string;
+    provenanceTitle: string;
+    provenanceNote: string;
+    fieldCount: (n: number) => string;
+  };
 }
 
 /*
@@ -459,6 +480,22 @@ const zh: Dict = {
     fieldCount: (n) => `${n} 个字段`,
     siblingCount: (n) => `${n} 个型号`,
     noSiblings: '这家厂商在本快照里只有这一个型号。',
+  },
+
+  vendor: {
+    back: '返回总览',
+    modelCount: (n) => `${n} 个模型`,
+    retiredCount: (n) => `${n} 个已退役`,
+    homepage: '官网',
+    kindSummaryLabel: '类型构成',
+    timelineTitle: '发布时间线',
+    timelineNote: '按发布月份分组，新的在上；同月内按发布日期倒序。',
+    releases: (n) => `${n} 个发布`,
+    unknownDate: '发布日期不详',
+    provenanceTitle: '数据出处',
+    provenanceNote:
+      '本家全部型号的逐字段来源汇总。具体哪个字段来自哪个上游，见每个型号详情页的数据出处表。',
+    fieldCount: (n) => `${n} 个字段`,
   },
 };
 

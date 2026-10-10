@@ -269,6 +269,62 @@ export interface Dict {
     provenanceNote: string;
     fieldCount: (n: number) => string;
   };
+
+  /**
+   * 排行榜与总表。这一节的文案与首页那个 `leaderboard`（首页的排行分区）不同：
+   * 那一条是「综合智力排行」块的标题，这里是一整条页面路由。
+   */
+  board: {
+    title: string;
+    intro: (tracks: number, models: number) => string;
+    allLink: (n: number) => string;
+    allTitle: string;
+    allIntro: (total: number, alive: number) => string;
+    back: string;
+    trackNav: string;
+    trackSelect: string;
+    onBoard: (n: number) => string;
+    offBoard: (n: number) => string;
+    emptyTrack: string;
+    noTracks: string;
+    expandAll: (n: number) => string;
+    collapse: (n: number) => string;
+    legacy: string;
+    homepage: string;
+    /** 筛选条上的固定文案 */
+    filter: {
+      search: string;
+      searchPlaceholder: string;
+      region: string;
+      weights: string;
+      year: string;
+      vendor: string;
+      unlimited: string;
+      all: string;
+      retired: string;
+      matched: (n: number) => string;
+      clear: string;
+      clearVendors: string;
+    };
+    /** 总表的列名。`price` 已含单位，格子里只放数字 */
+    col: {
+      model: string;
+      vendor: string;
+      region: string;
+      kind: string;
+      date: string;
+      open: string;
+      ctx: string;
+      price: string;
+      eci: string;
+      code: string;
+      n: string;
+    };
+    noMatch: string;
+    /** 空值格 */
+    emptyCell: string;
+    note: string;
+  };
 }
 
 /*
@@ -496,6 +552,58 @@ const zh: Dict = {
     provenanceNote:
       '本家全部型号的逐字段来源汇总。具体哪个字段来自哪个上游，见每个型号详情页的数据出处表。',
     fieldCount: (n) => `${n} 个字段`,
+  },
+
+  board: {
+    title: '排行榜',
+    intro: (tracks, models) =>
+      `${tracks} 个榜单可开榜，覆盖 ${models} 个模型。分数全部来自第三方公开评测，按榜单分开比较，跨榜不混算。`,
+    allLink: (n) => `查全部 ${n} 个模型`,
+    allTitle: '全部模型',
+    allIntro: (total, alive) =>
+      `共 ${total} 个模型，其中 ${alive} 个在役。点列名排序，点模型名进详情页。「—」表示没有公开数据，不是零。`,
+    back: '回排行榜',
+    trackNav: '赛道',
+    trackSelect: '选择赛道',
+    onBoard: (n) => `${n} 位上榜`,
+    offBoard: (n) => `其余 ${n} 位未参赛`,
+    emptyTrack:
+      '当前筛选条件下没有模型在这条赛道上有成绩。未参赛不等于做不到——本站不会用估算值填空。',
+    noTracks: '快照里还没有任何够 5 个模型的榜单，暂时开不了榜。',
+    expandAll: (n) => `展开全部 ${n} 位`,
+    collapse: (n) => `只看前 ${n} 名`,
+    legacy: '显示旧版榜单',
+    homepage: '榜单主页',
+    filter: {
+      search: '搜索',
+      searchPlaceholder: '模型名或厂商',
+      region: '地区',
+      weights: '开放',
+      year: '年份',
+      vendor: '厂商',
+      unlimited: '不限',
+      all: '全部',
+      retired: '含已退役',
+      matched: (n) => `${n} 个模型符合`,
+      clear: '清空筛选',
+      clearVendors: '清空厂商',
+    },
+    col: {
+      model: '模型',
+      vendor: '厂商',
+      region: '地区',
+      kind: '类型',
+      date: '发布',
+      open: '开源',
+      ctx: '上下文',
+      price: '输出价格 $/M',
+      eci: '综合智力',
+      code: '编程',
+      n: '参赛榜数',
+    },
+    noMatch: '没有符合条件的模型。',
+    emptyCell: '暂无数据',
+    note: '综合智力来自 Epoch AI，编程一列显示的是同一赛制、同一测量方内部的分位档，原始分数与赛制见悬停提示与详情页。快照生成时刻与全部数据源见页脚。',
   },
 };
 

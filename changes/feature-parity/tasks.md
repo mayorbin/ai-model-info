@@ -19,10 +19,10 @@
 
 ### 批次 2 · 排行榜与总表
 
-- [ ] **2.1 排行榜派生层**：对齐参考项目的分榜清单（智力/性价比/上下文/价格/编程赛制）到 `src/lib/`，复用本项目已有 `derive.ts`/`champions.ts` 口径。证明：`npx tsc --noEmit`。
-- [ ] **2.2 排行榜页面**：`src/app/leaderboard/page.tsx`，分榜 tab + 表格化排行。证明：`npm run build` + 截图。
-- [ ] **2.3 筛选与 URL query 同步**：地区（国内/国外）、开源/闭源、类型、退役四维筛选，状态同步 URL query（借鉴参考项目 `useUrlQuery.ts`，静态导出下客户端读取）。证明：带 query 的 URL 直接打开能复原筛选态。
-- [ ] **2.4 总表页面**：`src/app/leaderboard/all/page.tsx` 全模型平铺，关键列（名称/厂商/类型/发布/上下文/价格/退役），复用 2.3 的筛选交互，行内链接到模型与厂商页。证明：`npm run check` 过（行数与既有口径不冲突）。
+- [x] **2.1 排行榜派生层**：对齐参考项目的分榜清单（智力/性价比/上下文/价格/编程赛制）到 `src/lib/`，复用本项目已有 `derive.ts`/`champions.ts` 口径。证明：`npx tsc --noEmit`。
+- [x] **2.2 排行榜页面**：`src/app/leaderboard/page.tsx`，分榜 tab + 表格化排行。证明：`npm run build` + 截图。
+- [x] **2.3 筛选与 URL query 同步**：地区（国内/国外）、开源/闭源、类型、退役四维筛选，状态同步 URL query（借鉴参考项目 `useUrlQuery.ts`，静态导出下客户端读取）。证明：带 query 的 URL 直接打开能复原筛选态。
+- [x] **2.4 总表页面**：`src/app/leaderboard/all/page.tsx` 全模型平铺，关键列（名称/厂商/类型/发布/上下文/价格/退役），复用 2.3 的筛选交互，行内链接到模型与厂商页。证明：`npm run check` 过（行数与既有口径不冲突）。
 
 ### 批次 3 · 时间线与对比页
 

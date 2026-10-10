@@ -6,7 +6,7 @@ import { GlobalSearch } from './GlobalSearch';
 const dict = getDict(DEFAULT_LANG);
 
 /**
- * 导航项。`ready` 为 false 的三条指向尚未实现的路由。
+ * 导航项。`ready` 为 false 的两条指向尚未实现的路由。
  *
  * 静态导出下指向不存在的路由会得到一个真的 404 页——那是坏链接，不是占位。
  * 所以未实现的**不进 `<nav>`**，渲染成旁边一条不可点的文字，对应批次落地时
@@ -20,7 +20,7 @@ const dict = getDict(DEFAULT_LANG);
 const NAV = [
   { key: 'overview', href: '/', ready: true },
   { key: 'chronicle', href: '/chronicle/', ready: false },
-  { key: 'leaderboard', href: '/leaderboard/', ready: false },
+  { key: 'leaderboard', href: '/leaderboard/', ready: true },
   { key: 'compare', href: '/compare/', ready: false },
 ] as const;
 

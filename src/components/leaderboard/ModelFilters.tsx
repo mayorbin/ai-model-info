@@ -4,8 +4,10 @@ import { useMemo } from 'react';
 import { VendorLogo } from '@/components/ui/VendorLogo';
 import { DEFAULT_LANG, getDict } from '@/lib/i18n';
 import { KINDS, type ModelKind } from '@/lib/kind';
+import { Segment } from './FilterControls';
 import { EMPTY_FILTER, isFilterActive, type FilterState, type Kind, type Region, type Weights } from './filters';
 import type { LeanModel, LeanVendor } from './types';
+import { CONTROL, FOCUS } from './ui';
 
 const dict = getDict(DEFAULT_LANG);
 
@@ -26,64 +28,6 @@ interface ModelFiltersProps {
   models: LeanModel[];
   /** 当前筛选后剩多少个模型，显示在清空按钮旁 */
   matched?: number;
-}
-
-/** 焦点环：与全站一致（键盘 tab 时才可见） */
-const FOCUS = 'outline-none focus-visible:border-line-focus focus-visible:ring-1 focus-visible:ring-line-focus';
-
-const CONTROL =
-  `min-h-7 rounded-md border border-line bg-inset px-2 text-xs leading-6 text-fg transition-colors duration-120 ${FOCUS}`;
-
-/** 一组互斥的小按钮。按下态是「边框提亮 + 背景抬一档」，不是彩色填充 */
-function Segment<T extends string>({
-  label,
-  value,
-  options,
-  onChange,
-}: {
-  label: string;
-  value: T;
-  options: { id: T; text: string; title?: string }[];
-  onChange: (v: T) => void;
-}) {
-  return (
-    <div className="flex flex-wrap items-center gap-1" role="group" aria-label={label}>
-      <span className="mr-0.5 shrink-0 text-2xs text-fg-dim">{label}</span>
-      {options.map((o) => (
-        <Chip key={o.id} pressed={o.id === value} onClick={() => onChange(o.id)} title={o.title}>
-          {o.text}
-        </Chip>
-      ))}
-    </div>
-  );
-}
-
-function Chip({
-  pressed,
-  onClick,
-  children,
-  title,
-}: {
-  pressed: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-  title?: string;
-}) {
-  return (
-    <button
-      type="button"
-      aria-pressed={pressed}
-      title={title}
-      onClick={onClick}
-      className={`inline-flex min-h-7 items-center rounded-md border px-2 text-xs transition-colors duration-120 ${FOCUS} ${
-        pressed
-          ? 'border-line-strong bg-raised text-fg'
-          : 'border-line bg-inset text-fg-muted hover:text-fg'
-      }`}
-    >
-      {children}
-    </button>
-  );
 }
 
 export function ModelFilters({ value, onChange, vendors, models, matched }: ModelFiltersProps) {

@@ -20,12 +20,6 @@ export interface Dict {
     chronicle: string;
     leaderboard: string;
     compare: string;
-    /**
-     * 尚未实现的路由旁边那句解释。
-     * 上一版写的是「该页面不在本次变更范围内」——那是**发布流程的语言**，
-     * 读者不关心变更范围，他只想知道是不是自己点错了。改成说人话。
-     */
-    unbuilt: string;
   };
 
   continent: {
@@ -325,6 +319,88 @@ export interface Dict {
     emptyCell: string;
     note: string;
   };
+
+  /** 时间线页：全站唯一回答「这些年发生了什么」的一屏 */
+  chronicle: {
+    intro: (n: number) => string;
+    /** 年份锚点行的前缀 */
+    jump: string;
+    jumpLabel: string;
+    yearTitle: (year: number) => string;
+    releases: (n: number) => string;
+    /** 悬停提示里对「只精确到月」的说明 */
+    monthOnly: string;
+    retired: string;
+  };
+
+  /** 模型对比页。文案全部按数据套模板，与全站的「不下判断」立场一致 */
+  cmp: {
+    title: string;
+    pickPlaceholder: string;
+    pickDisabled: string;
+    pickLabel: string;
+    noMatch: string;
+    emptyHint: string;
+    loading: string;
+    loadFailed: string;
+    remove: (name: string) => string;
+    /**
+     * 列头卡上的名次。
+     *
+     * **不能复用 `model.rank`**：那句话里含「N 个有第三方综合成绩的模型」，
+     * 而 `check-consistency.ts` 要求产物里这个 N 处处相同（214）。
+     * 对比页只想说「第几名」，分母在这里没有信息量，也就绝不能带上它。
+     */
+    eciRank: (n: number) => string;
+    eciUnranked: string;
+    /** 总比分：跑分交手 N 项 */
+    contested: (n: number) => string;
+    noCommon: string;
+    addOneMore: string;
+    ties: (n: number) => string;
+    wins: string;
+    winsMulti: string;
+    /** 分区标题 */
+    section: {
+      highlights: string;
+      aptitude: string;
+      scores: string;
+      specs: string;
+      same: string;
+    };
+    aptitudeHint: string;
+    noHighlights: string;
+    scopeGroup: string;
+    scopeCommon: (n: number) => string;
+    scopeAll: (n: number) => string;
+    noScores: string;
+    rankOf: (n: number) => string;
+    notPublished: string;
+    notEntered: string;
+    lowerIsBetter: string;
+    superseded: string;
+    spec: {
+      date: string;
+      kind: string;
+      kindSuffix: string;
+      ctx: string;
+      maxOut: string;
+      priceIn: string;
+      priceOut: string;
+      priceCached: string;
+      cutoff: string;
+      reads: string;
+      generates: string;
+      reasoning: string;
+      toolCall: string;
+      openWeights: string;
+      params: string;
+      free: string;
+      yes: string;
+      no: string;
+    };
+    note: string;
+  };
 }
 
 /*
@@ -347,7 +423,6 @@ const zh: Dict = {
     chronicle: '时间线',
     leaderboard: '排行榜',
     compare: '对比',
-    unbuilt: '这个页面还没有做',
   },
 
   continent: {
@@ -604,6 +679,75 @@ const zh: Dict = {
     noMatch: '没有符合条件的模型。',
     emptyCell: '暂无数据',
     note: '综合智力来自 Epoch AI，编程一列显示的是同一赛制、同一测量方内部的分位档，原始分数与赛制见悬停提示与详情页。快照生成时刻与全部数据源见页脚。',
+  },
+
+  chronicle: {
+    intro: (n) => `${n} 个模型按发布月份排列，最新的在上。日期只精确到月的模型不补出「日」。`,
+    jump: '跳到',
+    jumpLabel: '按年份跳转',
+    yearTitle: (year) => `${year} 年`,
+    releases: (n) => `${n} 个发布`,
+    monthOnly: '发布日期仅精确到月',
+    retired: '已退役',
+  },
+
+  cmp: {
+    title: '模型对比',
+    pickPlaceholder: '添加模型，如 Claude、GPT、DeepSeek',
+    pickDisabled: '最多同时对比 4 个模型',
+    pickLabel: '添加要对比的模型',
+    noMatch: '没有匹配的模型',
+    emptyHint: '在右上角挑两个模型，或者从这几场开始：',
+    loading: '正在载入模型数据…',
+    loadFailed: '对比数据没有加载成功，刷新一下试试。',
+    remove: (name) => `移除 ${name}`,
+    eciRank: (n) => `综合智力第 ${n} 名`,
+    eciUnranked: '综合智力暂无排名',
+    contested: (n) => `跑分交手 ${n} 项`,
+    noCommon: '还没有共同参加的评测',
+    addOneMore: '再添加一个模型开始对比',
+    ties: (n) => `打平 ${n} 项`,
+    wins: '胜',
+    winsMulti: '第一',
+    section: {
+      highlights: '各自亮点',
+      aptitude: '能力分位',
+      scores: '评测跑分',
+      specs: '基本信息',
+      same: '都一样',
+    },
+    aptitudeHint: '在全部模型里的分位：聪明取综合智力，编程取最可信的一项编程评测，记性是上下文窗口，便宜是输出价',
+    noHighlights: '暂无明显亮点',
+    scopeGroup: '显示范围',
+    scopeCommon: (n) => `共同参加 ${n}`,
+    scopeAll: (n) => `全部 ${n}`,
+    noScores: '这几个模型还没有公开的第三方评测成绩，新模型一般要一到两周才会被测到。',
+    rankOf: (n) => `在这个榜的 ${n} 个模型里排第`,
+    notPublished: '未公布',
+    notEntered: '未参赛',
+    lowerIsBetter: '越低越好',
+    superseded: '旧版',
+    spec: {
+      date: '发布日期',
+      kind: '类型',
+      kindSuffix: '模型',
+      ctx: '上下文窗口',
+      maxOut: '单次最多输出',
+      priceIn: '输入价 / 百万 tokens',
+      priceOut: '输出价 / 百万 tokens',
+      priceCached: '缓存命中价',
+      cutoff: '知识截止',
+      reads: '能读',
+      generates: '能生成',
+      reasoning: '深度思考',
+      toolCall: '工具调用',
+      openWeights: '开源权重',
+      params: '参数量',
+      free: '免费',
+      yes: '支持',
+      no: '不支持',
+    },
+    note: '跑分来自第三方公开评测，标「自报」的是厂商公布的成绩、未经第三方复核。只在同一榜单、同一测量方之间比较；「#3/25」是在该榜全部模型里的名次。数据截至见页脚快照时刻。',
   },
 };
 

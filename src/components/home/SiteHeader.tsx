@@ -6,22 +6,18 @@ import { GlobalSearch } from './GlobalSearch';
 const dict = getDict(DEFAULT_LANG);
 
 /**
- * 导航项。`ready` 为 false 的两条指向尚未实现的路由。
+ * 导航项。
  *
- * 静态导出下指向不存在的路由会得到一个真的 404 页——那是坏链接，不是占位。
- * 所以未实现的**不进 `<nav>`**，渲染成旁边一条不可点的文字，对应批次落地时
- * 把 ready 改成 true 即可。
- *
- * 为什么这一轮把「不进 nav」落实了：此前那三条是 `<nav>` 里带 `aria-disabled` 的
- * `<span>`，而 `aria-disabled` 挂在没有 role 的元素上会被读屏忽略。于是读屏用户的
- * 实际体验是「导航里有四项，只有一项是链接」，而哪三项是坏的、为什么坏，一句话都没有。
- * 现在 `<nav>` 里只有真链接，那三条是旁边一句陈述，各自带一份 sr-only 说明。
+ * 四条路由现在**全部落地**，所以 `ready` 这个开关连同「未实现」那一串文字一起删掉了。
+ * 那条规则本身仍然成立，只是当前没有适用对象：静态导出下指向不存在的路由会得到
+ * 一个真的 404 页——那是坏链接，不是占位；一旦再出现「计划中但还没做」的页面，
+ * 就照旧做成 `<nav>` 外面的一句陈述 + sr-only 说明，而不是 `<nav>` 里的假链接。
  */
 const NAV = [
-  { key: 'overview', href: '/', ready: true },
-  { key: 'chronicle', href: '/chronicle/', ready: false },
-  { key: 'leaderboard', href: '/leaderboard/', ready: true },
-  { key: 'compare', href: '/compare/', ready: false },
+  { key: 'overview', href: '/' },
+  { key: 'chronicle', href: '/chronicle/' },
+  { key: 'leaderboard', href: '/leaderboard/' },
+  { key: 'compare', href: '/compare/' },
 ] as const;
 
 /**
@@ -34,8 +30,6 @@ const NAV = [
  * 一个页面两个 h1 会让读屏的标题导航多出一个同级的、内容却不是页面主题的条目。
  */
 export function SiteHeader({ current = '/' }: { current?: string | null }) {
-  const ready = NAV.filter((i) => i.ready);
-  const unbuilt = NAV.filter((i) => !i.ready);
   const siteNameIsH1 = current === '/';
 
   return (
@@ -49,7 +43,7 @@ export function SiteHeader({ current = '/' }: { current?: string | null }) {
           )}
 
           <nav aria-label="主导航">
-            {ready.map((item) => {
+            {NAV.map((item) => {
               const here = item.href === current;
               return (
                 <Link
@@ -73,25 +67,6 @@ export function SiteHeader({ current = '/' }: { current?: string | null }) {
         <div className="flex min-w-0 flex-1 items-center justify-end gap-1.5 sm:gap-3">
           <div className="w-full min-w-0 max-w-[170px] sm:max-w-xs">
             <GlobalSearch />
-          </div>
-
-          {/*
-            这三条在**任何宽度都留在页面上**。此前它们被 `hidden md:flex` 从 390 下整条移除，
-            而它们承载的是「这三个页面还没做」这个事实，不是装饰——按本项目的规矩，
-            信息不进颜色，也不该进断点。窄屏省下的空间从内边距和缝隙里取：
-            `px-2→px-1`、`gap-1→gap-0.5`，12px 字号与 `--fg-dim` 不动。
-          */}
-          <div className="flex shrink-0 items-center gap-0.5 sm:gap-1">
-            {unbuilt.map((item) => (
-              <span
-                key={item.key}
-                className="shrink-0 px-1 text-xs text-fg-dim sm:px-2"
-                title={dict.nav.unbuilt}
-              >
-                {dict.nav[item.key]}
-                <span className="sr-only">（{dict.nav.unbuilt}）</span>
-              </span>
-            ))}
           </div>
         </div>
       </div>

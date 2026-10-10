@@ -4,10 +4,11 @@ import Link from 'next/link';
 import { useMemo } from 'react';
 import { VendorLogo } from '@/components/ui/VendorLogo';
 import { DEFAULT_LANG, getDict } from '@/lib/i18n';
-import { KINDS } from '@/lib/kind';
+import { COLUMNS, DEFAULT_LIMIT, DEFAULT_SORT, KIND_ORDER, type Column, type Dir, type SortKey } from './allColumns';
 import { EMPTY_FILTER, filterFromParams, filterToParams, makePredicate, type FilterState } from './filters';
 import { ModelFilters } from './ModelFilters';
 import type { AllRow, AllTableData } from './types';
+import { FOCUS } from './ui';
 import { useUrlQuery } from './useUrlQuery';
 
 const dict = getDict(DEFAULT_LANG);
@@ -19,40 +20,6 @@ const dict = getDict(DEFAULT_LANG);
  * 编程那一列只显示分位档（顶尖/很强/中等……），原始分数放在悬停提示里——
  * 二十多个赛制的分数互不可比，并排摆出来一定会被读者直接比大小。
  */
-
-type SortKey = 'name' | 'vendor' | 'region' | 'kind' | 'date' | 'open' | 'ctx' | 'price' | 'eci' | 'code' | 'n';
-type Dir = 'asc' | 'desc';
-
-/** 类型列按 KINDS 的顺序排（文本 → 视觉 → … → 语音），不按中文字符排 */
-const KIND_ORDER = new Map(KINDS.map((k, i) => [k, i]));
-
-const DEFAULT_LIMIT = 100;
-const DEFAULT_SORT: { key: SortKey; dir: Dir } = { key: 'eci', dir: 'desc' };
-const FOCUS = 'outline-none focus-visible:border-line-focus focus-visible:ring-1 focus-visible:ring-line-focus';
-
-interface Column {
-  key: SortKey;
-  label: string;
-  /** 该列默认的排序方向：数值列先看最大，名字列先看 A */
-  defaultDir: Dir;
-  /** 窄屏隐藏的次要列 */
-  secondary?: boolean;
-  align?: 'left' | 'right';
-}
-
-const COLUMNS: Column[] = [
-  { key: 'name', label: dict.board.col.model, defaultDir: 'asc' },
-  { key: 'vendor', label: dict.board.col.vendor, defaultDir: 'asc', secondary: true },
-  { key: 'region', label: dict.board.col.region, defaultDir: 'asc', secondary: true },
-  { key: 'kind', label: dict.board.col.kind, defaultDir: 'asc', secondary: true },
-  { key: 'date', label: dict.board.col.date, defaultDir: 'desc', secondary: true },
-  { key: 'open', label: dict.board.col.open, defaultDir: 'desc', secondary: true },
-  { key: 'ctx', label: dict.board.col.ctx, defaultDir: 'desc', secondary: true, align: 'right' },
-  { key: 'price', label: dict.board.col.price, defaultDir: 'asc', align: 'right' },
-  { key: 'eci', label: dict.board.col.eci, defaultDir: 'desc', align: 'right' },
-  { key: 'code', label: dict.board.col.code, defaultDir: 'desc', align: 'right' },
-  { key: 'n', label: dict.board.col.n, defaultDir: 'desc', secondary: true, align: 'right' },
-];
 
 export function AllModelsTable({ data }: { data: AllTableData }) {
   const [params, update] = useUrlQuery();

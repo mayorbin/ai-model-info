@@ -5,6 +5,7 @@ import { SiteFooter } from '@/components/home/SiteFooter';
 import { SiteHeader } from '@/components/home/SiteHeader';
 import { StatusBar } from '@/components/home/StatusBar';
 import { VendorSection } from '@/components/home/VendorSection';
+import { BackToTop } from '@/components/ui/BackToTop';
 import { canonicalVendorId, VENDOR_REGISTRY } from '@/data/vendor-registry';
 import { buildAptitudeScale } from '@/lib/aptitude';
 import { buildChampions } from '@/lib/champions';
@@ -107,6 +108,7 @@ export default function Page() {
 
           <RankingList board={board} />
         </div>
+        <BackToTop />
       </main>
       <SiteFooter snapshot={snapshot} />
     </>

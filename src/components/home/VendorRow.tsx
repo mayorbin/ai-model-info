@@ -57,7 +57,11 @@ export function VendorRow({ model, vendor }: VendorRowProps) {
      */
     /* min-w-0 不能省：栅格项的 `min-width` 默认是 auto，一行长型号名会把整列撑出容器，
        实测 390 下「Sakana AI / Fugu Ultra V2」这一行宽到 486px，整页因此横向溢出 */
-    <li data-vendor={vendor.id} className="min-w-0 border-b border-line-faint">
+    <li
+      id={`vendor-${vendor.id}`}
+      data-vendor={vendor.id}
+      className="min-w-0 scroll-mt-20 border-b border-line-faint"
+    >
       <Link
         href={`/model/${model.slug}/`}
         className="group flex min-w-0 items-start gap-2.5 py-2 transition-colors duration-120"

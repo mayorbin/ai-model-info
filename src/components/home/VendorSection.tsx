@@ -134,49 +134,51 @@ function VendorBlock({ entry, modelsByVendor, apt, now }: VendorBlockProps) {
      * `data-vendor` 同时是 `check-consistency.ts` 的稳定计数锚点——
      * 那个脚本原先靠匹配一串 className 计数，改一次样式就会误报。
      */
-    <article data-vendor={vendor.id} className="flex min-w-0 flex-col gap-2">
-      <div className="flex min-w-0 items-center gap-2">
-        <VendorLogo
-          vendorId={vendor.id}
-          name={vendor.nameZh}
-          brandColor={vendor.accentColor}
-          size={24}
-        />
-        {/* 厂商名是**标签**不是内容：降为 12px/500 弱化色，把 13px/600 让给模型名独占 */}
-        <h3 className="min-w-0 flex-1 truncate text-xs font-medium text-fg-muted">
-          {vendor.nameZh}
-        </h3>
+    <article
+      id={`vendor-${vendor.id}`}
+      data-vendor={vendor.id}
+      className="flex h-full min-w-0 scroll-mt-20 flex-col gap-2"
+    >
+      <div className="flex min-w-0 items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <VendorLogo
+            vendorId={vendor.id}
+            name={vendor.nameZh}
+            brandColor={vendor.accentColor}
+            size={24}
+          />
+          {/* 厂商名是**标签**不是内容：降为 12px/500 弱化色，把 13px/600 让给模型名独占 */}
+          <h3 className="min-w-0 truncate text-xs font-medium text-fg-muted">
+            {vendor.nameZh}
+          </h3>
+        </div>
+
+        {/*
+         * 门面按实力选，代价是评测滞后时新发的型号暂时看不见。
+         * 将更新提示收纳在厂商头部右侧，避免在卡片下方渲染额外兄弟节点导致同行模型卡片被顶起、底边参差。
+         */}
+        {newer != null && (
+          <Link
+            href={`/model/${newer.slug}/`}
+            className="flex min-w-0 items-center gap-1 text-2xs text-fg-dim transition-colors duration-120 hover:text-fg hover:underline hover:underline-offset-4"
+            title={dict.plaza.newerHint(newer.name, newer.releaseDate ?? '')}
+          >
+            <Badge tone="pos" className="shrink-0">
+              {dict.plaza.newerBadge}
+            </Badge>
+            <span className="min-w-0 max-w-24 truncate sm:max-w-32">{newer.name}</span>
+            {/*
+              `title` 挂在不聚焦的元素上，键盘与触屏都拿不到 → 同一句话放进 sr-only，
+              照 MetricBar 的既有做法（零像素成本）。
+            */}
+            <span className="sr-only">
+              {dict.plaza.newerHint(newer.name, newer.releaseDate ?? '')}
+            </span>
+          </Link>
+        )}
       </div>
 
       <ModelCard model={model} vendor={vendor} apt={apt.rowOf(model)} now={now} />
-
-      {/*
-       * 门面按实力选，代价是评测滞后时新发的型号暂时看不见。这行小字补的就是这个缺口：
-       * 不动选拔结果，只说出事实。
-       *
-       * **它现在是链接。** 此前它是 `<p>`，文案里那句「点这行可以直接去看它」被删掉了——
-       * 因为当时没有可去的地方，删得对。现在型号有详情页了，于是**动作回来了**：
-       * 一个「有更新的型号但你够不着」的提示，是这一页最容易让人挫败的一句话。
-       */}
-      {newer != null && (
-        <Link
-          href={`/model/${newer.slug}/`}
-          className="flex min-w-0 items-center gap-1.5 text-2xs text-fg-dim transition-colors duration-120 hover:text-fg hover:underline hover:underline-offset-4"
-          title={dict.plaza.newerHint(newer.name, newer.releaseDate ?? '')}
-        >
-          <Badge tone="pos" className="shrink-0">
-            {dict.plaza.newerBadge}
-          </Badge>
-          <span className="min-w-0 truncate">{newer.name}</span>
-          {/*
-            `title` 挂在不聚焦的元素上，键盘与触屏都拿不到 → 同一句话放进 sr-only，
-            照 MetricBar 的既有做法（零像素成本）。
-          */}
-          <span className="sr-only">
-            {dict.plaza.newerHint(newer.name, newer.releaseDate ?? '')}
-          </span>
-        </Link>
-      )}
     </article>
   );
 }

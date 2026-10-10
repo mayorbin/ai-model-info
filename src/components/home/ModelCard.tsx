@@ -46,23 +46,27 @@ export function ModelCard({ model, vendor, apt, now }: ModelCardProps) {
      */
     <Link href={`/model/${model.slug}/`} className="group flex min-w-0 flex-1 flex-col">
       <Panel className="flex h-full flex-col gap-2.5 p-3 transition-colors duration-120 group-hover:border-line-strong">
-        <div className="flex items-start gap-2">
+        <div className="flex min-h-[2.5rem] items-start gap-2">
           <VendorLogo
             vendorId={vendor.id}
             name={vendor.nameZh}
             brandColor={vendor.accentColor}
             size={20}
-            className="mt-0.5"
+            className="mt-0.5 shrink-0"
           />
           {/*
             模型名是 h4 而不是 span：厂商块已经是 h3（厂商名），
             而读者跳读标题时找的是**型号**。此前它是裸 span，
             读屏的标题导航只能跳到「Anthropic」，跳不到「Claude Opus 5.5」。
+            锁定两行高度槽位，确保长短名字与徽章存在时下方能力条水平基线绝对一致。
           */}
-          <h4 className="min-w-0 flex-1 text-sm font-semibold leading-snug text-fg">
+          <h4
+            className="line-clamp-2 min-w-0 flex-1 text-sm font-semibold leading-snug text-fg"
+            title={model.name}
+          >
             {model.name}
           </h4>
-          {badge != null && <Badge tone={badge.tone}>{badge.label}</Badge>}
+          {badge != null && <Badge tone={badge.tone} className="shrink-0">{badge.label}</Badge>}
         </div>
 
         <div className="flex flex-col gap-1.5">
@@ -88,8 +92,8 @@ export function ModelCard({ model, vendor, apt, now }: ModelCardProps) {
           })}
         </div>
 
-        {/* 底部一行事实。不是营销文案，每一项都能从快照里查到 */}
-        <div className="flex items-center gap-1.5 text-2xs text-fg-dim">
+        {/* 底部一行事实。mt-auto 强制贴底对齐 */}
+        <div className="mt-auto flex items-center gap-1.5 pt-1 text-2xs text-fg-dim">
           <span className="min-w-0 truncate">{vendor.nameZh}</span>
           {date != null && (
             <>

@@ -54,7 +54,8 @@ const FIELD: Record<string, string> = {
  * 两个非上游来源必须与真正的数据源区分开。把它们和 `models.dev` 并列写成
  * 「来源：derived」，读者会以为是某家没听过的机构；它们其实是**本站自己算的**。
  */
-const INTERNAL_SOURCE: Partial<Record<SourceId, string>> = {
+/* 导出给厂商页的数据出处区复用：两个非上游来源只有一套叫法（见上方注释） */
+export const INTERNAL_SOURCE: Partial<Record<SourceId, string>> = {
   derived: '本站推导',
   override: '人工录入',
 };

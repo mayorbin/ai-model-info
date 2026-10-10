@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { cx } from './cx';
 
 interface SectionHeadingProps {
@@ -6,6 +7,12 @@ interface SectionHeadingProps {
   id?: string;
   /** 右侧的等宽计数，如「13 家」 */
   count?: string;
+  /**
+   * 右侧的任意节点，与 `count` 二选一。
+   * 对比页的分区要在标题右边放一组切换控件（共同参加 / 全部），
+   * 而它们不是计数——给 `count` 传字符串表达不了。
+   */
+  aside?: ReactNode;
   /** 分区识别色，会作为标题左侧的 3px 竖条。只用于国外/国内这类分区 */
   accentColor?: string;
   /** 悬停解释这一组的判定依据 */
@@ -24,6 +31,7 @@ export function SectionHeading({
   title,
   id,
   count,
+  aside,
   accentColor,
   hint,
   className,
@@ -47,7 +55,11 @@ export function SectionHeading({
       <h2 id={id} className="scroll-mt-20 text-lg font-semibold text-fg">
         {title}
       </h2>
-      {count != null && <span className="tnum ml-auto text-xs text-fg-dim">{count}</span>}
+      {aside != null ? (
+        <div className="ml-auto">{aside}</div>
+      ) : (
+        count != null && <span className="tnum ml-auto text-xs text-fg-dim">{count}</span>
+      )}
     </div>
   );
 }

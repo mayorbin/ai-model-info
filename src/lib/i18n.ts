@@ -20,12 +20,6 @@ export interface Dict {
     chronicle: string;
     leaderboard: string;
     compare: string;
-    /**
-     * 尚未实现的路由旁边那句解释。
-     * 上一版写的是「该页面不在本次变更范围内」——那是**发布流程的语言**，
-     * 读者不关心变更范围，他只想知道是不是自己点错了。改成说人话。
-     */
-    unbuilt: string;
   };
 
   continent: {
@@ -248,6 +242,165 @@ export interface Dict {
     siblingCount: (n: number) => string;
     noSiblings: string;
   };
+
+  /** 厂商详情页。首页每家只露一个门面，这一页摊开它的全部型号与出处 */
+  vendor: {
+    /** 返回总览 */
+    back: string;
+    /** 头部计数，如「88 个模型」 */
+    modelCount: (n: number) => string;
+    retiredCount: (n: number) => string;
+    homepage: string;
+    /** 类型构成那一行的前缀。只是文字摘要，不是筛选（筛选在总表页） */
+    kindSummaryLabel: string;
+    timelineTitle: string;
+    timelineNote: string;
+    /** 每个月份桶标题旁的计数 */
+    releases: (n: number) => string;
+    /** unknown 桶的标题 */
+    unknownDate: string;
+    provenanceTitle: string;
+    provenanceNote: string;
+    fieldCount: (n: number) => string;
+  };
+
+  /**
+   * 排行榜与总表。这一节的文案与首页那个 `leaderboard`（首页的排行分区）不同：
+   * 那一条是「综合智力排行」块的标题，这里是一整条页面路由。
+   */
+  board: {
+    title: string;
+    intro: (tracks: number, models: number) => string;
+    allLink: (n: number) => string;
+    allTitle: string;
+    allIntro: (total: number, alive: number) => string;
+    back: string;
+    trackNav: string;
+    trackSelect: string;
+    onBoard: (n: number) => string;
+    offBoard: (n: number) => string;
+    emptyTrack: string;
+    noTracks: string;
+    expandAll: (n: number) => string;
+    collapse: (n: number) => string;
+    legacy: string;
+    homepage: string;
+    /** 筛选条上的固定文案 */
+    filter: {
+      search: string;
+      searchPlaceholder: string;
+      region: string;
+      weights: string;
+      year: string;
+      vendor: string;
+      unlimited: string;
+      all: string;
+      retired: string;
+      matched: (n: number) => string;
+      clear: string;
+      clearVendors: string;
+    };
+    /** 总表的列名。`price` 已含单位，格子里只放数字 */
+    col: {
+      model: string;
+      vendor: string;
+      region: string;
+      kind: string;
+      date: string;
+      open: string;
+      ctx: string;
+      price: string;
+      eci: string;
+      code: string;
+      n: string;
+    };
+    noMatch: string;
+    /** 空值格 */
+    emptyCell: string;
+    note: string;
+  };
+
+  /** 时间线页：全站唯一回答「这些年发生了什么」的一屏 */
+  chronicle: {
+    intro: (n: number) => string;
+    /** 年份锚点行的前缀 */
+    jump: string;
+    jumpLabel: string;
+    yearTitle: (year: number) => string;
+    releases: (n: number) => string;
+    /** 悬停提示里对「只精确到月」的说明 */
+    monthOnly: string;
+    retired: string;
+  };
+
+  /** 模型对比页。文案全部按数据套模板，与全站的「不下判断」立场一致 */
+  cmp: {
+    title: string;
+    pickPlaceholder: string;
+    pickDisabled: string;
+    pickLabel: string;
+    noMatch: string;
+    emptyHint: string;
+    loading: string;
+    loadFailed: string;
+    remove: (name: string) => string;
+    /**
+     * 列头卡上的名次。
+     *
+     * **不能复用 `model.rank`**：那句话里含「N 个有第三方综合成绩的模型」，
+     * 而 `check-consistency.ts` 要求产物里这个 N 处处相同（214）。
+     * 对比页只想说「第几名」，分母在这里没有信息量，也就绝不能带上它。
+     */
+    eciRank: (n: number) => string;
+    eciUnranked: string;
+    /** 总比分：跑分交手 N 项 */
+    contested: (n: number) => string;
+    noCommon: string;
+    addOneMore: string;
+    ties: (n: number) => string;
+    wins: string;
+    winsMulti: string;
+    /** 分区标题 */
+    section: {
+      highlights: string;
+      aptitude: string;
+      scores: string;
+      specs: string;
+      same: string;
+    };
+    aptitudeHint: string;
+    noHighlights: string;
+    scopeGroup: string;
+    scopeCommon: (n: number) => string;
+    scopeAll: (n: number) => string;
+    noScores: string;
+    rankOf: (n: number) => string;
+    notPublished: string;
+    notEntered: string;
+    lowerIsBetter: string;
+    superseded: string;
+    spec: {
+      date: string;
+      kind: string;
+      kindSuffix: string;
+      ctx: string;
+      maxOut: string;
+      priceIn: string;
+      priceOut: string;
+      priceCached: string;
+      cutoff: string;
+      reads: string;
+      generates: string;
+      reasoning: string;
+      toolCall: string;
+      openWeights: string;
+      params: string;
+      free: string;
+      yes: string;
+      no: string;
+    };
+    note: string;
+  };
 }
 
 /*
@@ -270,7 +423,6 @@ const zh: Dict = {
     chronicle: '时间线',
     leaderboard: '排行榜',
     compare: '对比',
-    unbuilt: '这个页面还没有做',
   },
 
   continent: {
@@ -459,6 +611,143 @@ const zh: Dict = {
     fieldCount: (n) => `${n} 个字段`,
     siblingCount: (n) => `${n} 个型号`,
     noSiblings: '这家厂商在本快照里只有这一个型号。',
+  },
+
+  vendor: {
+    back: '返回总览',
+    modelCount: (n) => `${n} 个模型`,
+    retiredCount: (n) => `${n} 个已退役`,
+    homepage: '官网',
+    kindSummaryLabel: '类型构成',
+    timelineTitle: '发布时间线',
+    timelineNote: '按发布月份分组，新的在上；同月内按发布日期倒序。',
+    releases: (n) => `${n} 个发布`,
+    unknownDate: '发布日期不详',
+    provenanceTitle: '数据出处',
+    provenanceNote:
+      '本家全部型号的逐字段来源汇总。具体哪个字段来自哪个上游，见每个型号详情页的数据出处表。',
+    fieldCount: (n) => `${n} 个字段`,
+  },
+
+  board: {
+    title: '排行榜',
+    intro: (tracks, models) =>
+      `${tracks} 个榜单可开榜，覆盖 ${models} 个模型。分数全部来自第三方公开评测，按榜单分开比较，跨榜不混算。`,
+    allLink: (n) => `查全部 ${n} 个模型`,
+    allTitle: '全部模型',
+    allIntro: (total, alive) =>
+      `共 ${total} 个模型，其中 ${alive} 个在役。点列名排序，点模型名进详情页。「—」表示没有公开数据，不是零。`,
+    back: '回排行榜',
+    trackNav: '赛道',
+    trackSelect: '选择赛道',
+    onBoard: (n) => `${n} 位上榜`,
+    offBoard: (n) => `其余 ${n} 位未参赛`,
+    emptyTrack:
+      '当前筛选条件下没有模型在这条赛道上有成绩。未参赛不等于做不到——本站不会用估算值填空。',
+    noTracks: '快照里还没有任何够 5 个模型的榜单，暂时开不了榜。',
+    expandAll: (n) => `展开全部 ${n} 位`,
+    collapse: (n) => `只看前 ${n} 名`,
+    legacy: '显示旧版榜单',
+    homepage: '榜单主页',
+    filter: {
+      search: '搜索',
+      searchPlaceholder: '模型名或厂商',
+      region: '地区',
+      weights: '开放',
+      year: '年份',
+      vendor: '厂商',
+      unlimited: '不限',
+      all: '全部',
+      retired: '含已退役',
+      matched: (n) => `${n} 个模型符合`,
+      clear: '清空筛选',
+      clearVendors: '清空厂商',
+    },
+    col: {
+      model: '模型',
+      vendor: '厂商',
+      region: '地区',
+      kind: '类型',
+      date: '发布',
+      open: '开源',
+      ctx: '上下文',
+      price: '输出价格 $/M',
+      eci: '综合智力',
+      code: '编程',
+      n: '参赛榜数',
+    },
+    noMatch: '没有符合条件的模型。',
+    emptyCell: '暂无数据',
+    note: '综合智力来自 Epoch AI，编程一列显示的是同一赛制、同一测量方内部的分位档，原始分数与赛制见悬停提示与详情页。快照生成时刻与全部数据源见页脚。',
+  },
+
+  chronicle: {
+    intro: (n) => `${n} 个模型按发布月份排列，最新的在上。日期只精确到月的模型不补出「日」。`,
+    jump: '跳到',
+    jumpLabel: '按年份跳转',
+    yearTitle: (year) => `${year} 年`,
+    releases: (n) => `${n} 个发布`,
+    monthOnly: '发布日期仅精确到月',
+    retired: '已退役',
+  },
+
+  cmp: {
+    title: '模型对比',
+    pickPlaceholder: '添加模型，如 Claude、GPT、DeepSeek',
+    pickDisabled: '最多同时对比 4 个模型',
+    pickLabel: '添加要对比的模型',
+    noMatch: '没有匹配的模型',
+    emptyHint: '在右上角挑两个模型，或者从这几场开始：',
+    loading: '正在载入模型数据…',
+    loadFailed: '对比数据没有加载成功，刷新一下试试。',
+    remove: (name) => `移除 ${name}`,
+    eciRank: (n) => `综合智力第 ${n} 名`,
+    eciUnranked: '综合智力暂无排名',
+    contested: (n) => `跑分交手 ${n} 项`,
+    noCommon: '还没有共同参加的评测',
+    addOneMore: '再添加一个模型开始对比',
+    ties: (n) => `打平 ${n} 项`,
+    wins: '胜',
+    winsMulti: '第一',
+    section: {
+      highlights: '各自亮点',
+      aptitude: '能力分位',
+      scores: '评测跑分',
+      specs: '基本信息',
+      same: '都一样',
+    },
+    aptitudeHint: '在全部模型里的分位：聪明取综合智力，编程取最可信的一项编程评测，记性是上下文窗口，便宜是输出价',
+    noHighlights: '暂无明显亮点',
+    scopeGroup: '显示范围',
+    scopeCommon: (n) => `共同参加 ${n}`,
+    scopeAll: (n) => `全部 ${n}`,
+    noScores: '这几个模型还没有公开的第三方评测成绩，新模型一般要一到两周才会被测到。',
+    rankOf: (n) => `在这个榜的 ${n} 个模型里排第`,
+    notPublished: '未公布',
+    notEntered: '未参赛',
+    lowerIsBetter: '越低越好',
+    superseded: '旧版',
+    spec: {
+      date: '发布日期',
+      kind: '类型',
+      kindSuffix: '模型',
+      ctx: '上下文窗口',
+      maxOut: '单次最多输出',
+      priceIn: '输入价 / 百万 tokens',
+      priceOut: '输出价 / 百万 tokens',
+      priceCached: '缓存命中价',
+      cutoff: '知识截止',
+      reads: '能读',
+      generates: '能生成',
+      reasoning: '深度思考',
+      toolCall: '工具调用',
+      openWeights: '开源权重',
+      params: '参数量',
+      free: '免费',
+      yes: '支持',
+      no: '不支持',
+    },
+    note: '跑分来自第三方公开评测，标「自报」的是厂商公布的成绩、未经第三方复核。只在同一榜单、同一测量方之间比较；「#3/25」是在该榜全部模型里的名次。数据截至见页脚快照时刻。',
   },
 };
 

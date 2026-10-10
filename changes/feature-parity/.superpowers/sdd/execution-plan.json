@@ -1,0 +1,34 @@
+{
+  "mode": "inline",
+  "source": "approved-plan",
+  "rationale": "用户在方案确认中选择「按计划全部补齐（推荐）」，批准 proposal.md 中 5 项页面级差距的完整补齐方案",
+  "waves": [
+    {
+      "id": "implementation",
+      "strategy": "serial",
+      "tasks": [
+        "1.1",
+        "1.2",
+        "1.3",
+        "2.1",
+        "2.2",
+        "2.3",
+        "2.4",
+        "3.1",
+        "3.2",
+        "3.3",
+        "3.4",
+        "4.1",
+        "4.2"
+      ],
+      "depends_on": []
+    }
+  ],
+  "artifacts_hash": "sha256:0179a25bf0a7011acfa4293d970818442c605d424a5bb2b1a566e102d6fe8bdf",
+  "contract_hash": null,
+  "workflow": "full",
+  "revision": 1,
+  "schema_version": 2,
+  "review_policy": "final",
+  "hash": "sha256:162feee63ae011644081bc5ca248d95bb515d4f3e311741a0da9850c336acdec"
+}

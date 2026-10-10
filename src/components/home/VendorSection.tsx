@@ -147,9 +147,19 @@ function VendorBlock({ entry, modelsByVendor, apt, now }: VendorBlockProps) {
             brandColor={vendor.accentColor}
             size={24}
           />
-          {/* 厂商名是**标签**不是内容：降为 12px/500 弱化色，把 13px/600 让给模型名独占 */}
+          {/*
+           * 厂商名是**标签**不是内容：降为 12px/500 弱化色，把 13px/600 让给模型名独占。
+           * 但从这一版起它是**链接**——厂商详情页存在了，「这家还有什么」有了尽头，
+           * 于是这一行从纯文字变成入口（按项目的规则：有功能才给它形状）。
+           */}
           <h3 className="min-w-0 truncate text-xs font-medium text-fg-muted">
-            {vendor.nameZh}
+            <Link
+              href={`/vendor/${vendor.id}/`}
+              className="transition-colors duration-120 hover:text-fg hover:underline hover:underline-offset-4"
+              title={dict.vendor.modelCount(modelsByVendor.get(vendor.id)?.length ?? 0)}
+            >
+              {vendor.nameZh}
+            </Link>
           </h3>
         </div>
 

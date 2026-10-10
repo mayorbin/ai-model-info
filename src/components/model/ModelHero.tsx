@@ -62,7 +62,17 @@ export function ModelHero({ model, vendor, rank, rankedTotal, now }: ModelHeroPr
           className="mt-1"
         />
         <div className="min-w-0 flex-1">
-          <span className="block text-xs text-fg-dim">{vendorName}</span>
+          {/*
+            厂商名是通往厂商详情页的入口：这一页回答了「它多强」，
+            但「这家还有别的吗 / 这家这些年怎么走过来的」在厂商页上。
+            它保持 12px `--fg-dim` 的标签体量——链接的身份由悬停态表达，不由字号表达。
+          */}
+          <Link
+            href={`/vendor/${model.vendorId}/`}
+            className="block w-fit max-w-full truncate text-xs text-fg-dim underline-offset-4 transition-colors duration-120 hover:text-fg hover:underline"
+          >
+            {vendorName}
+          </Link>
           {/*
             详情页的 h1 是 20px：高于分区的 16px h2，又低于下面那个 26px 的读数——
             这一页的主角是读数，标题只负责说明这是谁的读数。
